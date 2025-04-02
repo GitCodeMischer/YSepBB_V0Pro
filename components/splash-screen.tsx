@@ -65,7 +65,7 @@ export default function SplashScreen({ finishedLoading, onComplete }: SplashScre
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              FinTrack
+              YSepBB
             </motion.h1>
 
             <motion.div

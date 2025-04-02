@@ -3,13 +3,14 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Apple, ArrowRight, Loader2 } from "lucide-react"
+import { Apple, ArrowRight, Loader2, ChevronRight } from "lucide-react"
 import { FcGoogle } from "react-icons/fc"
 import { FaMicrosoft, FaWallet, FaBitcoin } from "react-icons/fa"
 import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import TresorIcon from "@/components/tresor-icon"
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
@@ -76,12 +77,24 @@ export default function SignupPage() {
         onMouseLeave={() => setIsHovering(false)}
       >
         <div className="absolute inset-0 bg-zinc-900">
-          <Image
-            src="/placeholder.svg?height=1080&width=1920"
-            fill
-            alt="Authentication background"
-            className="object-cover opacity-20"
-          />
+          {/* Background grid pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <svg
+              width="100%"
+              height="100%"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+              </pattern>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+          
+          {/* Centered Tresor Icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <TresorIcon size={350} animated={true} darkMode={true} />
+          </div>
         </div>
         <div className="relative z-20 flex items-center text-lg font-medium">
           <motion.div
@@ -167,7 +180,7 @@ export default function SignupPage() {
               />
             </svg>
           </motion.div>
-          <span>FinTrack</span>
+          <span>YSepBB</span>
         </div>
         <div className="relative z-20 mt-auto">
           <motion.blockquote
@@ -177,7 +190,7 @@ export default function SignupPage() {
             transition={{ delay: 0.5, duration: 0.8 }}
           >
             <p className="text-lg">
-              "Since I started using FinTrack, I've gained complete visibility into my finances and have been able to
+              "Since I started using YSepBB, I've gained complete visibility into my finances and have been able to
               plan for my future with confidence."
             </p>
             <footer className="text-sm">Alex Johnson</footer>
@@ -381,9 +394,181 @@ export default function SignupPage() {
             </Link>
             .
           </p>
+          
+          {/* Link to login page */}
+          <div className="text-center">
+            <Link 
+              href="/auth/login" 
+              className="inline-flex items-center space-x-1 text-sm font-medium hover:text-primary transition-colors duration-200"
+            >
+              <span>Already have an account? Login</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   )
 }
+
+{/* Add these CSS styles to the document */}
+<style jsx global>{`
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-gpu {
+    transform: translateZ(0);
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-5px) translateX(5px); }
+    50% { transform: translateY(-10px) translateX(0); }
+    75% { transform: translateY(-5px) translateX(-5px); }
+  }
+  
+  @keyframes draw {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes flutter {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    25% { transform: rotate(1deg) translateY(-2px); }
+    50% { transform: rotate(0deg) translateY(-1px); }
+    75% { transform: rotate(-1deg) translateY(-3px); }
+  }
+  
+  .animate-float {
+    animation: float 5s ease-in-out infinite;
+  }
+  
+  .animate-float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+  
+  .animate-draw, .animate-draw-delay, .animate-draw-delay-2 {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 4s forwards;
+  }
+  
+  .animate-draw-delay {
+    animation-delay: 0.5s;
+  }
+  
+  .animate-draw-delay-2 {
+    animation-delay: 1s;
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse 3s infinite;
+  }
+  
+  .animate-rotate {
+    transform-origin: 130px 120px;
+    animation: rotate 10s linear infinite;
+  }
+  
+  .safe-group, .bitcoin, .ethereum, .gold-bar-1, .gold-bar-2, .gold-bar-3,
+  .cash-1, .cash-2, .cash-3, .cash-4, .candle-up, .candle-down, .data-text {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .safe-body:hover, .hover-pop:hover {
+    transform: scale(1.05) translateZ(50px);
+  }
+  
+  .safe-door:hover, .hover-rotate:hover {
+    transform: rotateY(15deg);
+  }
+  
+  .safe-handle:hover, .hover-pull:hover {
+    transform: translateX(3px);
+  }
+  
+  .hover-rise:hover {
+    transform: translateY(-15px);
+  }
+  
+  .hover-rise-1:hover {
+    transform: translateY(-5px) rotateX(10deg);
+  }
+  
+  .hover-rise-2:hover {
+    transform: translateY(-8px) rotateX(15deg);
+  }
+  
+  .hover-rise-3:hover {
+    transform: translateY(-12px) rotateX(20deg);
+  }
+  
+  .hover-flutter:hover {
+    animation: flutter 2s ease-in-out infinite;
+  }
+  
+  .hover-rotate-3d:hover {
+    transform: rotate3d(1, 1, 0, 30deg);
+  }
+  
+  .hover-rotate-3d-alt:hover {
+    transform: rotate3d(-1, 1, 0, 30deg);
+  }
+  
+  .hover-rise-fast:hover {
+    transform: translateY(-20px) scale(1.1);
+  }
+  
+  .hover-sink-fast:hover {
+    transform: translateY(20px) scale(1.1);
+  }
+  
+  .coin-glow {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .bitcoin:hover .coin-glow, .ethereum:hover .coin-glow {
+    opacity: 0.8;
+  }
+  
+  .candle-glow {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .candle-up:hover .candle-glow, .candle-down:hover .candle-glow {
+    opacity: 0.7;
+  }
+  
+  .data-text:hover {
+    transform: scale(1.2) translateZ(30px);
+    text-shadow: 0 0 10px currentColor;
+  }
+  
+  .glow-effect {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .safe-body:hover + .glow-effect {
+    opacity: 0.7;
+  }
+`}</style>
 

@@ -26,7 +26,7 @@ export default function MobileHeader({ sidebarOpen, onToggleSidebar }: MobileHea
 
           <div className="relative">
             <div className="absolute -left-1 -top-1 h-8 w-8 rounded-full bg-accent-green/30 blur-lg dark:bg-accent-green/20"></div>
-            <h1 className="relative text-xl font-bold">FinTrack</h1>
+            <h1 className="relative text-xl font-bold">YSepBB</h1>
           </div>
         </div>
 
