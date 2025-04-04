@@ -33,17 +33,17 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | FinTrack",
-    default: "FinTrack - Personal Finance Dashboard",
+    template: "%s | YSepBB",
+    default: "YSepBB - Personal Finance Dashboard",
   },
-  description: "Track your finances, investments, and spending habits with FinTrack - the modern personal finance management app",
+  description: "Track your finances, investments, and spending habits with YSepBB - the modern personal finance management app",
   keywords: ["finance", "budget", "investment", "personal finance", "money management", "expenses"],
-  creator: "FinTrack Team",
+  creator: "YSepBB Team",
   openGraph: {
     type: "website",
-    title: "FinTrack - Personal Finance Dashboard",
-    description: "Track your finances, investments, and spending habits with FinTrack",
-    siteName: "FinTrack",
+    title: "YSepBB - Personal Finance Dashboard",
+    description: "Track your finances, investments, and spending habits with YSepBB",
+    siteName: "YSepBB",
   },
   generator: 'v0.dev',
   manifest: "/manifest.json",
@@ -65,7 +65,7 @@ export default function RootLayout({
           defaultTheme="system" 
           enableSystem 
           disableTransitionOnChange={false}
-          storageKey="fintrack-theme"
+          storageKey="YSepBB-theme"
         >
           <SidebarProvider>
             {/* Top navigation - visible on all screen sizes */}

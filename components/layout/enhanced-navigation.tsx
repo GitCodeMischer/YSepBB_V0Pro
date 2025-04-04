@@ -17,6 +17,8 @@ import {
   CreditCard,
   BarChart2,
   PieChart,
+  CircleDollarSign,
+  ChevronDown,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -24,6 +26,17 @@ import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
 import SearchPopup from "@/components/search-popup"
 import { EnhancedThemeToggle } from "@/components/enhanced-theme-toggle"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface EnhancedNavigationProps {
   className?: string
@@ -41,7 +54,8 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
   const notificationsRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const { theme } = useTheme()
-
+  const isMobile = useMediaQuery("(max-width: 767px)")
+  
   // Check if we're on the login or signup page
   const isAuthPage = pathname?.includes("/auth/")
 
@@ -116,6 +130,14 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
     },
   ]
 
+  // User profile data (normally would come from authentication context)
+  const userProfile = {
+    name: "Alex Johnson",
+    email: "alex.johnson@example.com",
+    role: "Premium User",
+    avatar: "/assets/avatar.png" // Would be a real avatar path
+  }
+
   return (
     <>
       <div
@@ -145,7 +167,7 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
                 </svg>
                 <div className="absolute -inset-0.5 rounded-lg bg-primary/20 blur-sm"></div>
               </div>
-              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">FinTrack</span>
+              <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">YSepBB</span>
             </div>
 
             {/* Desktop logo - position absolute to center it with the sidebar */}
@@ -165,7 +187,7 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
                 </svg>
                 <div className="absolute -inset-0.5 rounded-lg bg-primary/20 blur-sm"></div>
               </div>
-              <span className="text-lg font-bold ml-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">FinTrack</span>
+              <span className="text-lg font-bold ml-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">YSepBB</span>
             </div>
           </div>
 
@@ -229,33 +251,25 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
                         Mark all as read
                       </Button>
                     </div>
-                    <div className="max-h-[350px] overflow-y-auto custom-scrollbar">
+                    <div className="max-h-[350px] overflow-y-auto p-0">
                       {notifications.map((notification) => (
                         <div
                           key={notification.id}
                           className={cn(
-                            "flex gap-3 border-t border-border/50 p-4 transition-colors hover:bg-foreground/5",
-                            notification.unread && "bg-foreground/5",
+                            "border-t border-border/20 p-3 last:border-b hover:bg-foreground/5 transition-colors cursor-pointer",
+                            notification.unread ? "border-l-2 border-l-primary pl-2" : ""
                           )}
                         >
-                          <div
-                            className={cn(
-                              "mt-1 h-2 w-2 flex-shrink-0 rounded-full",
-                              notification.unread ? "bg-primary" : "bg-transparent",
-                            )}
-                          />
-                          <div className="flex-1">
-                            <div className="flex justify-between">
-                              <p className="font-medium">{notification.title}</p>
-                              <span className="text-xs text-muted-foreground">{notification.time}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{notification.message}</p>
+                          <div className="mb-0.5 flex items-center justify-between">
+                            <h4 className="font-medium">{notification.title}</h4>
+                            <span className="text-xs text-muted-foreground">{notification.time}</span>
                           </div>
+                          <p className="text-sm text-muted-foreground">{notification.message}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="border-t border-border/50 p-2">
-                      <Button variant="ghost" size="sm" className="w-full justify-center neon-green">
+                    <div className="border-t border-border/20 p-3 text-center">
+                      <Button variant="ghost" size="sm" className="text-sm text-primary">
                         View all notifications
                       </Button>
                     </div>
@@ -274,92 +288,81 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
               <span className="sr-only">Search</span>
             </Button>
 
-            {/* Only show theme toggle in mobile view */}
-            <div className="md:hidden">
-              <EnhancedThemeToggle variant="icon" />
+            {/* Desktop Theme Toggle */}
+            <div className="hidden md:block">
+              <EnhancedThemeToggle variant="icon" className="glass-button glass-hover-glow" />
             </div>
 
-            <div className="relative" ref={profileRef}>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="glass-button glass-hover h-9 w-9 overflow-hidden p-0"
-                onClick={() => {
-                  setIsProfileOpen(!isProfileOpen)
-                  setIsNotificationsOpen(false)
-                }}
-              >
-                <Avatar className="h-9 w-9 border border-border/50">
-                  <AvatarImage src="/placeholder.svg?height=36&width=36" alt="User" />
-                  <AvatarFallback className="bg-foreground/5 text-foreground">JD</AvatarFallback>
-                </Avatar>
-              </Button>
-
-              {/* Profile Dropdown */}
-              <AnimatePresence>
-                {isProfileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                    className="glass-dropdown absolute right-0 mt-2 w-56 overflow-hidden"
-                  >
-                    <div className="p-3">
-                      <div className="flex items-center gap-3 pb-3">
-                        <Avatar className="h-10 w-10 border border-border/50">
-                          <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-                          <AvatarFallback className="bg-foreground/5 text-foreground">JD</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">John Doe</p>
-                          <p className="text-xs text-muted-foreground">john@example.com</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1 pt-2">
-                        <Button variant="ghost" size="sm" className="w-full justify-start glass-hover">
-                          <User className="mr-2 h-4 w-4" />
-                          Profile
-                        </Button>
-                        <Button variant="ghost" size="sm" className="w-full justify-start glass-hover">
-                          <Wallet className="mr-2 h-4 w-4" />
-                          My Accounts
-                        </Button>
-                        <Button variant="ghost" size="sm" className="w-full justify-start glass-hover">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Settings
-                        </Button>
-                        <Button variant="ghost" size="sm" className="w-full justify-start glass-hover">
-                          <HelpCircle className="mr-2 h-4 w-4" />
-                          Help & Support
-                        </Button>
-                      </div>
+            {/* User Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="rounded-full gap-2 glass-button glass-hover pl-2 pr-3">
+                  <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-xs font-medium text-primary">
+                      {userProfile.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <span className="hidden md:block text-sm font-medium truncate max-w-[100px]">
+                    {userProfile.name}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 glass-dropdown" align="end" sideOffset={8}>
+                <div className="flex flex-col p-3 gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary">
+                        {userProfile.name.split(' ').map(n => n[0]).join('')}
+                      </span>
                     </div>
-
-                    <div className="border-t border-border/50 p-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start text-destructive hover:text-destructive glass-hover"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log out
-                      </Button>
+                    <div className="flex flex-col space-y-1">
+                      <p className="font-medium text-sm">{userProfile.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{userProfile.role}</p>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <User className="h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Wallet className="h-4 w-4" />
+                    <span>My Accounts</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <CreditCard className="h-4 w-4" />
+                    <span>Billing</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                    <Settings className="h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                  <HelpCircle className="h-4 w-4" />
+                  <span>Help Center</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-red-500 dark:text-red-400">
+                  <LogOut className="h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="glass-button glass-hover-glow md:hidden"
-              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden glass-button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Menu</span>
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <span className="sr-only">Toggle menu</span>
             </Button>
           </div>
         </div>

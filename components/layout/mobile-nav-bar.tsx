@@ -17,9 +17,11 @@ import {
   Target,
   Calendar,
   TrendingUp,
-  X
+  X,
+  User
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { EnhancedThemeToggle } from "@/components/enhanced-theme-toggle"
 
 interface MobileNavBarProps {
   className?: string
@@ -28,6 +30,14 @@ interface MobileNavBarProps {
 export function MobileNavBar({ className }: MobileNavBarProps) {
   const pathname = usePathname()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  
+  // User profile data (normally would come from authentication context)
+  const userProfile = {
+    name: "Alex Johnson",
+    email: "alex.johnson@example.com",
+    role: "Premium User",
+    avatar: "/assets/avatar.png" // This would be a real avatar path
+  }
   
   // Mobile navigation items (limited to 5 most important)
   const navItems = [
@@ -180,6 +190,26 @@ export function MobileNavBar({ className }: MobileNavBarProps) {
                   <span className="sr-only">Close</span>
                 </Button>
               </div>
+              
+              {/* User Profile Section */}
+              <div className="p-4 border-b border-border/20">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-lg font-medium text-primary">
+                      {userProfile.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">{userProfile.name}</p>
+                    <p className="text-sm text-muted-foreground">{userProfile.role}</p>
+                  </div>
+                  <Button variant="outline" size="sm" className="rounded-full gap-2">
+                    <User className="h-4 w-4" />
+                    <span>Profile</span>
+                  </Button>
+                </div>
+              </div>
+              
               <div className="flex-1 overflow-auto p-4">
                 <div className="grid grid-cols-2 gap-4">
                   {drawerItems.map((item) => {
@@ -200,6 +230,17 @@ export function MobileNavBar({ className }: MobileNavBarProps) {
                       </Link>
                     )
                   })}
+                </div>
+                
+                {/* Theme Toggle Section */}
+                <div className="mt-6 p-4 rounded-lg border border-border/20">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Toggle Theme</span>
+                    <EnhancedThemeToggle variant="icon" />
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Switch between light and dark mode
+                  </p>
                 </div>
               </div>
             </div>

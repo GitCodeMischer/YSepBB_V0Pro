@@ -152,7 +152,7 @@ export default function DesktopSidebar({ navigation, currentRoute, onNavigate }:
               <Wallet className="h-5 w-5 text-primary-foreground" />
               <div className="absolute -inset-0.5 rounded-xl bg-primary/20 blur-sm"></div>
             </div>
-            <h1 className="text-xl font-bold">FinTrack</h1>
+            <h1 className="text-xl font-bold">YSepBB</h1>
           </div>
         </div>
 

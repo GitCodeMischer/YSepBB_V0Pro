@@ -24,7 +24,7 @@ export default function LoginPage() {
 
       // Store a simple auth token in localStorage to simulate authentication
       localStorage.setItem(
-        "fintrack-auth",
+        "YSepBB-auth",
         JSON.stringify({
           authenticated: true,
           user: {
@@ -170,7 +170,7 @@ export default function LoginPage() {
               </svg>
               <div className="absolute -inset-0.5 rounded-lg bg-primary/20 blur-sm"></div>
             </div>
-            <span className="ml-2 text-xl font-bold">FinTrack</span>
+            <span className="ml-2 text-xl font-bold">YSepBB</span>
           </div>
           <ThemeToggleButton />
         </div>
@@ -365,7 +365,7 @@ export default function LoginPage() {
             transition={{ delay: 0.5, duration: 0.8 }}
           >
             <p className="text-lg">
-              "FinTrack has completely transformed how I manage my finances. The insights and analytics have helped me
+              "YSepBB has completely transformed how I manage my finances. The insights and analytics have helped me
               save more than ever before."
             </p>
             <footer className="text-sm text-muted-foreground">Sofia Davis</footer>

@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface NavItemProps {
   name: string
@@ -183,12 +184,9 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
               <button
                 onClick={() => hasChildren ? toggleSubMenu(item.href) : undefined}
                 className={cn(
-                  "w-full text-left flex items-center px-3 py-2.5 rounded-lg",
-                  "transition-all duration-200",
+                  "sidebar-nav-item",
                   isCollapsed ? "justify-center" : "justify-between",
-                  isItemOrChildActive 
-                    ? "bg-gradient-to-r from-primary/20 to-primary/5 text-white" 
-                    : "text-white/60 hover:text-white hover:bg-white/5"
+                  isItemOrChildActive && "sidebar-nav-item-active"
                 )}
                 style={{ 
                   animationDelay: `${(index + sectionIndex * 5 + 1) * 40}ms`,
@@ -264,9 +262,9 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
                 animate="open"
                 exit="closed"
                 variants={submenuVariants}
-                className="overflow-hidden pl-9 mt-1 mb-1"
+                className="sidebar-submenu-container"
               >
-                <div className="border-l-2 border-white/10 pl-2 py-1 space-y-1">
+                <div className="sidebar-submenu">
                   {item.children!.map((child, childIndex) => {
                     const isChildActive = pathname === child.href || pathname?.startsWith(child.href);
                     return (
@@ -274,11 +272,8 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
                         key={child.href}
                         href={child.href}
                         className={cn(
-                          "flex items-center gap-2 px-3 py-1.5 text-sm rounded-md",
-                          "transition-all duration-200",
-                          isChildActive 
-                            ? "bg-primary/10 text-white" 
-                            : "text-white/50 hover:text-white hover:bg-white/5"
+                          "sidebar-submenu-item",
+                          isChildActive && "sidebar-submenu-item-active"
                         )}
                       >
                         <div className="relative">
@@ -316,10 +311,7 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
   return (
     <motion.aside
       className={cn(
-        "sidebar-nav-connection fixed top-16 bottom-0 left-0",
-        "flex flex-col overflow-hidden z-30",
-        "bg-gradient-to-b from-background via-background/98 to-background/95",
-        "border-r border-white/5 backdrop-blur-md shadow-lg shadow-black/5",
+        "sidebar-nav-connection",
         className
       )}
       animate={isCollapsed ? "collapsed" : "expanded"}
@@ -329,7 +321,7 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
       <div className="flex items-center justify-end p-3.5" suppressHydrationWarning>
         <button
           onClick={toggleSidebar}
-          className="p-1.5 rounded-lg hover:bg-white/5 transition-all duration-200 hover:scale-105 active:scale-95 text-white/70 hover:text-white"
+          className="sidebar-toggle-btn"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? (
@@ -344,11 +336,10 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
         <nav className="px-2 space-y-6">
           <div className="space-y-1" suppressHydrationWarning>
             <div className={cn(
-              "px-3 mb-2",
+              "sidebar-section-heading",
               isCollapsed ? "text-center" : ""
             )} suppressHydrationWarning>
               <motion.p 
-                className="text-xs uppercase tracking-wider text-white/50"
                 variants={textVariants}
               >
                 Main
@@ -359,11 +350,10 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
           
           <div className="space-y-1" suppressHydrationWarning>
             <div className={cn(
-              "px-3 mb-2",
+              "sidebar-section-heading",
               isCollapsed ? "text-center" : ""
             )} suppressHydrationWarning>
               <motion.p 
-                className="text-xs uppercase tracking-wider text-white/50"
                 variants={textVariants}
               >
                 Financial Planning

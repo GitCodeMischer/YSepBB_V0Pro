@@ -44,7 +44,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
             animate={{ opacity: 1, x: 0 }}
             className="text-xl font-bold text-white"
           >
-            FinTrack
+            YSepBB
           </motion.h1>
         </div>
       </div>

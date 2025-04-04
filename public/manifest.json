@@ -1,7 +1,7 @@
 {
-  "name": "FinTrack - Personal Finance Dashboard",
-  "short_name": "FinTrack",
-  "description": "Track your finances, investments, and spending habits with FinTrack",
+  "name": "YSepBB - Personal Finance Dashboard",
+  "short_name": "YSepBB",
+  "description": "Track your finances, investments, and spending habits with YSepBB",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

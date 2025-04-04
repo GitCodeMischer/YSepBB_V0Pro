@@ -152,7 +152,7 @@ export default function SignupPage() {
               </svg>
               <div className="absolute -inset-0.5 rounded-lg bg-primary/20 blur-sm"></div>
             </div>
-            <span className="ml-2 text-xl font-bold">FinTrack</span>
+            <span className="ml-2 text-xl font-bold">YSepBB</span>
           </div>
           <ThemeToggle />
         </div>
@@ -347,7 +347,7 @@ export default function SignupPage() {
             transition={{ delay: 0.5, duration: 0.8 }}
           >
             <p className="text-lg">
-              "Since I started using FinTrack, I've gained complete visibility into my finances and have been able to
+              "Since I started using YSepBB, I've gained complete visibility into my finances and have been able to
               plan for my future with confidence."
             </p>
             <footer className="text-sm text-muted-foreground">Alex Johnson</footer>

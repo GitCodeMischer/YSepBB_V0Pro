@@ -57,7 +57,7 @@ export function FixedNavigation() {
               </svg>
               <div className="absolute -inset-0.5 rounded-lg bg-[#00f56e]/20 blur-sm"></div>
             </div>
-            <span className="text-lg font-bold">FinTrack</span>
+            <span className="text-lg font-bold">YSepBB</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -155,7 +155,7 @@ export function FixedNavigation() {
                   <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
                 </svg>
               </div>
-              <span className="text-lg font-bold">FinTrack</span>
+              <span className="text-lg font-bold">YSepBB</span>
             </div>
             <Button
               variant="ghost"
