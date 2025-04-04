@@ -40,14 +40,14 @@ export default function SplashScreen({ finishedLoading, onComplete }: SplashScre
         >
           <div className="flex flex-col items-center">
             <motion.div
-              className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-green to-accent-green/80"
+              className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00f56e] to-[#00f56e]/80"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <Wallet className="h-12 w-12 text-accent-green-foreground" />
+              <Wallet className="h-12 w-12 text-black" />
               <motion.div
-                className="absolute -inset-1 rounded-2xl bg-accent-green/20 blur-lg"
+                className="absolute -inset-1 rounded-2xl bg-[#00f56e]/20 blur-lg"
                 animate={{
                   scale: [1, 1.1, 1],
                   opacity: [0.5, 0.8, 0.5],
@@ -65,7 +65,7 @@ export default function SplashScreen({ finishedLoading, onComplete }: SplashScre
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
             >
-              YSepBB
+              FinTrack
             </motion.h1>
 
             <motion.div

@@ -14,7 +14,7 @@ const assetData = [
   { name: "Real Estate", value: 19892, color: "hsl(var(--chart-4))" },
 ]
 
-export default function AssetAllocation() {
+export function AssetAllocation() {
   const [animatedData, setAnimatedData] = useState(assetData.map((item) => ({ ...item, value: 0 })))
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function AssetAllocation() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-      <Card className="border border-white/10 bg-white/5 shadow-lg backdrop-blur-md">
+      <Card className="backdrop-blur-md bg-black/40 border border-white/10 rounded-xl shadow-lg">
         <CardHeader>
           <CardTitle>Asset Allocation</CardTitle>
           <CardDescription>Distribution across asset classes</CardDescription>
@@ -99,4 +99,7 @@ export default function AssetAllocation() {
     </motion.div>
   )
 }
+
+// For backward compatibility
+export default AssetAllocation
 

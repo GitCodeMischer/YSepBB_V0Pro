@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Apple, ChevronRight, Loader2 } from "lucide-react"
 import { FcGoogle } from "react-icons/fc"
@@ -10,8 +9,7 @@ import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { StackedCardCarousel } from "@/components/stacked-card-carousel"
-import TresorIcon from "@/components/tresor-icon"
+import { ThemeToggleButton } from "@/components/theme-toggle-button"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<string | null>(null)
@@ -26,7 +24,7 @@ export default function LoginPage() {
 
       // Store a simple auth token in localStorage to simulate authentication
       localStorage.setItem(
-        "YSepBB-auth",
+        "fintrack-auth",
         JSON.stringify({
           authenticated: true,
           user: {
@@ -44,183 +42,361 @@ export default function LoginPage() {
     }, 1500)
   }
 
-  // SVG animation variants
-  const pathVariants = {
-    hidden: { pathLength: 0, opacity: 0 },
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
     visible: {
-      pathLength: 1,
       opacity: 1,
-      transition: { duration: 1, ease: "easeInOut" },
-    },
-  }
-
-  const circleVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  }
-
-  const floatVariants = {
-    idle: { y: 0 },
-    hover: {
-      y: [-5, 5, -5],
       transition: {
-        duration: 3,
-        repeat: Number.POSITIVE_INFINITY,
-        repeatType: "loop" as const,
+        delayChildren: 0.3,
+        staggerChildren: 0.1,
       },
     },
   }
 
-  const glowVariants = {
-    idle: { opacity: 0.5, scale: 1 },
+  const treasureVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  }
+
+  const coinVariants = {
+    hidden: { y: -10, opacity: 0, scale: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+    hover: (i: number) => ({
+      y: [0, -15, 0],
+      x: [0, i * 5, 0],
+      transition: {
+        duration: 2,
+        ease: "easeInOut",
+        repeat: Number.POSITIVE_INFINITY,
+        repeatType: "loop",
+        delay: i * 0.1,
+      },
+    }),
+  }
+
+  const bitcoinVariants = {
+    hidden: { y: -20, opacity: 0, rotate: -45 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      rotate: 0,
+      transition: { duration: 0.5, ease: "easeOut", delay: 0.6 },
+    },
     hover: {
-      opacity: [0.5, 0.8, 0.5],
+      y: [0, -10, 0],
+      rotate: [0, 15, 0],
+      transition: {
+        duration: 3,
+        ease: "easeInOut",
+        repeat: Number.POSITIVE_INFINITY,
+        repeatType: "loop",
+      },
+    },
+  }
+
+  const chartVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+    hover: (i: number) => ({
       scale: [1, 1.05, 1],
       transition: {
         duration: 2,
+        ease: "easeInOut",
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "loop" as const,
+        repeatType: "loop",
+        delay: i * 0.2,
+      },
+    }),
+  }
+
+  const lineVariants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+      pathLength: 1,
+      opacity: 1,
+      transition: { duration: 1.5, ease: "easeInOut" },
+    },
+  }
+
+  const glowVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 0.6, transition: { delay: 1 } },
+    hover: {
+      opacity: [0.6, 0.8, 0.6],
+      scale: [1, 1.05, 1],
+      transition: {
+        duration: 3,
+        repeat: Number.POSITIVE_INFINITY,
+        repeatType: "loop",
       },
     },
   }
 
   return (
-    <div className="container relative flex h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="flex h-screen flex-col transition-colors duration-300 md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div
-        className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r"
+        className="relative hidden h-full flex-col bg-gradient-to-b from-background to-background/90 p-10 text-foreground dark:from-background dark:to-background/90 lg:flex"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <div className="absolute inset-0 bg-zinc-900">
-          {/* Background grid pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <svg
-              width="100%"
-              height="100%"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-              </pattern>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-          
-          {/* Centered Tresor Icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <TresorIcon size={350} animated={true} darkMode={true} />
-          </div>
-        </div>
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={floatVariants}
-            whileHover="hover"
-            className="relative mr-4"
-          >
-            <motion.div
-              variants={glowVariants}
-              animate={isHovering ? "hover" : "idle"}
-              className="absolute -inset-2 rounded-full bg-accent-green/30 blur-lg"
-            />
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="relative"
-            >
-              <motion.circle
-                cx="20"
-                cy="20"
-                r="18"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={circleVariants}
-                initial="hidden"
-                animate="visible"
-                fill="rgba(0, 255, 102, 0.1)"
-              />
-              <motion.path
-                d="M13 20C13 16.134 16.134 13 20 13C23.866 13 27 16.134 27 20C27 23.866 23.866 27 20 27C16.134 27 13 23.866 13 20Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
+        <div className="relative z-20 flex items-center justify-between text-lg font-medium">
+          <div className="flex items-center">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
                 fill="none"
-              />
-              <motion.path
-                d="M20 13V8"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
-              />
-              <motion.path
-                d="M27 20H32"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
-              />
-              <motion.path
-                d="M20 27V32"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
-              />
-              <motion.path
-                d="M13 20H8"
-                stroke="currentColor"
-                strokeWidth="2"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
-              />
-              <motion.path
-                d="M20 17V20L22 22"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
-                variants={pathVariants}
-                initial="hidden"
-                animate="visible"
-              />
-            </svg>
-          </motion.div>
-          <span>YSepBB</span>
+                strokeLinejoin="round"
+                className="mr-2 h-6 w-6 text-primary-foreground"
+              >
+                <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+              </svg>
+              <div className="absolute -inset-0.5 rounded-lg bg-primary/20 blur-sm"></div>
+            </div>
+            <span className="ml-2 text-xl font-bold">FinTrack</span>
+          </div>
+          <ThemeToggleButton />
         </div>
-        <div className="mt-auto z-10 relative">
-          <StackedCardCarousel title="Financial News" subtitle="Latest updates" />
+
+        {/* Financial Animation */}
+        <div className="relative z-20 flex flex-1 items-center justify-center">
+          <motion.div
+            className="relative h-[400px] w-[400px]"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+          >
+            {/* Background glow */}
+            <motion.div
+              className="absolute inset-0 rounded-full bg-primary/20 blur-3xl"
+              variants={glowVariants}
+              animate={isHovering ? "hover" : "visible"}
+            />
+
+            {/* Treasure chest */}
+            <motion.div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              variants={treasureVariants}
+            >
+              <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Chest base */}
+                <motion.path
+                  d="M20 40H140V100C140 110 130 120 120 120H40C30 120 20 110 20 100V40Z"
+                  fill="#8B5A2B"
+                  stroke="#5D3A1A"
+                  strokeWidth="4"
+                  variants={lineVariants}
+                />
+                {/* Chest top */}
+                <motion.path
+                  d="M15 40C15 30 25 20 35 20H125C135 20 145 30 145 40H15Z"
+                  fill="#A67C52"
+                  stroke="#5D3A1A"
+                  strokeWidth="4"
+                  variants={lineVariants}
+                />
+                {/* Chest details */}
+                <motion.path
+                  d="M40 40V100M60 40V100M80 40V100M100 40V100M120 40V100"
+                  stroke="#5D3A1A"
+                  strokeWidth="2"
+                  variants={lineVariants}
+                />
+                <motion.path d="M20 60H140M20 80H140" stroke="#5D3A1A" strokeWidth="2" variants={lineVariants} />
+                {/* Lock */}
+                <motion.rect
+                  x="70"
+                  y="30"
+                  width="20"
+                  height="20"
+                  rx="2"
+                  fill="#FFD700"
+                  stroke="#B8860B"
+                  strokeWidth="2"
+                  variants={lineVariants}
+                />
+              </svg>
+            </motion.div>
+
+            {/* Gold coins */}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={`coin-${i}`}
+                className="absolute"
+                style={{
+                  left: `${50 + (i - 4) * 15}%`,
+                  top: `${45 + (i % 3) * 10}%`,
+                  zIndex: 10 - i,
+                }}
+                custom={i - 4}
+                variants={coinVariants}
+              >
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="15" cy="15" r="14" fill="#FFD700" stroke="#B8860B" strokeWidth="2" />
+                  <path d="M15 7V23M9 15H21" stroke="#B8860B" strokeWidth="2" />
+                </svg>
+              </motion.div>
+            ))}
+
+            {/* Bitcoin */}
+            <motion.div className="absolute left-[60%] top-[30%]" variants={bitcoinVariants}>
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" fill="#F7931A" />
+                <path d="M27 17.5C27 14.5 24.5 13 21.5 13H16V22H21.5C24.5 22 27 20.5 27 17.5Z" fill="#FFFFFF" />
+                <path d="M21.5 22H16V31H21.5C25 31 28 29 28 26.5C28 24 25 22 21.5 22Z" fill="#FFFFFF" />
+                <path d="M18 13V10M22 13V10M18 31V34M22 31V34" stroke="#F7931A" strokeWidth="2" />
+              </svg>
+            </motion.div>
+
+            {/* Dollar bills */}
+            <motion.div className="absolute left-[30%] top-[35%]" custom={1} variants={coinVariants}>
+              <svg width="50" height="30" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="50" height="30" rx="2" fill="#00A86B" />
+                <circle cx="25" cy="15" r="8" fill="#FFFFFF" stroke="#00A86B" strokeWidth="1" />
+                <path d="M25 7V23M21 11H29M21 19H29" stroke="#00A86B" strokeWidth="1" />
+              </svg>
+            </motion.div>
+
+            {/* Stock charts */}
+            <motion.div className="absolute left-[10%] top-[15%]" custom={0} variants={chartVariants}>
+              <svg width="80" height="60" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="60" rx="4" fill="#111111" />
+                <motion.path
+                  d="M10 40L20 30L30 35L40 15L50 25L60 10L70 20"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="2"
+                  variants={lineVariants}
+                />
+                <motion.path
+                  d="M10 50H70M10 10V50"
+                  stroke="#FFFFFF"
+                  strokeOpacity="0.5"
+                  strokeWidth="1"
+                  variants={lineVariants}
+                />
+              </svg>
+            </motion.div>
+
+            <motion.div className="absolute right-[10%] top-[20%]" custom={1} variants={chartVariants}>
+              <svg width="70" height="50" viewBox="0 0 70 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="70" height="50" rx="4" fill="#111111" />
+                <motion.path
+                  d="M10 20L20 15L30 25L40 10L50 30L60 15"
+                  stroke="#FF4560"
+                  strokeWidth="2"
+                  variants={lineVariants}
+                />
+                <motion.path
+                  d="M10 40H60M10 10V40"
+                  stroke="#FFFFFF"
+                  strokeOpacity="0.5"
+                  strokeWidth="1"
+                  variants={lineVariants}
+                />
+              </svg>
+            </motion.div>
+
+            <motion.div className="absolute left-[15%] bottom-[15%]" custom={2} variants={chartVariants}>
+              <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="60" height="60" rx="30" fill="#111111" />
+                <motion.path d="M30 10V30L45 45" stroke="#FFFFFF" strokeWidth="2" variants={lineVariants} />
+                <motion.path
+                  d="M30 30L15 45"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  strokeOpacity="0.6"
+                  variants={lineVariants}
+                />
+                <motion.circle
+                  cx="30"
+                  cy="30"
+                  r="19"
+                  stroke="#FFFFFF"
+                  strokeOpacity="0.3"
+                  strokeWidth="1"
+                  variants={lineVariants}
+                />
+              </svg>
+            </motion.div>
+
+            <motion.div className="absolute right-[15%] bottom-[20%]" custom={3} variants={chartVariants}>
+              <svg width="90" height="50" viewBox="0 0 90 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="90" height="50" rx="4" fill="#111111" />
+                <motion.rect x="10" y="30" width="10" height="10" fill="hsl(var(--primary))" variants={lineVariants} />
+                <motion.rect x="25" y="20" width="10" height="20" fill="hsl(var(--primary))" variants={lineVariants} />
+                <motion.rect x="40" y="25" width="10" height="15" fill="hsl(var(--primary))" variants={lineVariants} />
+                <motion.rect x="55" y="15" width="10" height="25" fill="hsl(var(--primary))" variants={lineVariants} />
+                <motion.rect x="70" y="10" width="10" height="30" fill="hsl(var(--primary))" variants={lineVariants} />
+                <motion.path
+                  d="M10 40H80"
+                  stroke="#FFFFFF"
+                  strokeOpacity="0.5"
+                  strokeWidth="1"
+                  variants={lineVariants}
+                />
+              </svg>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <div className="relative z-20 mt-auto">
+          <motion.blockquote
+            className="space-y-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            <p className="text-lg">
+              "FinTrack has completely transformed how I manage my finances. The insights and analytics have helped me
+              save more than ever before."
+            </p>
+            <footer className="text-sm text-muted-foreground">Sofia Davis</footer>
+          </motion.blockquote>
         </div>
       </div>
-      <div className="lg:p-8">
+      <div className="flex flex-col justify-center bg-muted/5 p-8 backdrop-blur-sm dark:bg-muted/5 lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your account using your preferred method</p>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-2">
+              <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+              <p className="text-sm text-muted-foreground">Sign in to your account using your preferred method</p>
+            </div>
+            <div className="lg:hidden">
+              <ThemeToggleButton />
+            </div>
           </div>
 
           <Tabs defaultValue="social" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="social">Social</TabsTrigger>
-              <TabsTrigger value="web3">Web3</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+              <TabsTrigger value="social" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Social
+              </TabsTrigger>
+              <TabsTrigger value="web3" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Web3
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="social" className="mt-4 space-y-4">
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("google")}
                 disabled={isLoading !== null}
               >
@@ -237,7 +413,7 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("apple")}
                 disabled={isLoading !== null}
               >
@@ -254,7 +430,7 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("microsoft")}
                 disabled={isLoading !== null}
               >
@@ -271,7 +447,7 @@ export default function LoginPage() {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
@@ -280,7 +456,7 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("passkey")}
                 disabled={isLoading !== null}
               >
@@ -311,18 +487,12 @@ export default function LoginPage() {
             <TabsContent value="web3" className="mt-4 space-y-4">
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("metamask")}
                 disabled={isLoading !== null}
               >
                 <div className="flex items-center">
-                  <Image
-                    src="/placeholder.svg?height=20&width=20"
-                    width={20}
-                    height={20}
-                    alt="Metamask"
-                    className="mr-2"
-                  />
+                  <div className="mr-2 h-5 w-5 rounded-full bg-orange-500"></div>
                   <span>MetaMask</span>
                 </div>
                 {isLoading === "metamask" ? (
@@ -334,18 +504,12 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("ledger")}
                 disabled={isLoading !== null}
               >
                 <div className="flex items-center">
-                  <Image
-                    src="/placeholder.svg?height=20&width=20"
-                    width={20}
-                    height={20}
-                    alt="Ledger"
-                    className="mr-2"
-                  />
+                  <div className="mr-2 h-5 w-5 rounded-full bg-blue-500"></div>
                   <span>Ledger</span>
                 </div>
                 {isLoading === "ledger" ? (
@@ -357,7 +521,7 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("phantom")}
                 disabled={isLoading !== null}
               >
@@ -374,7 +538,7 @@ export default function LoginPage() {
 
               <Button
                 variant="outline"
-                className="w-full justify-between"
+                className="btn-modern-outline w-full justify-between glass-hover"
                 onClick={() => handleAuth("solflare")}
                 disabled={isLoading !== null}
               >
@@ -393,191 +557,18 @@ export default function LoginPage() {
 
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
-            <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
+            <Link href="/terms" className="text-primary underline underline-offset-4 hover:text-primary/80">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
+            <Link href="/privacy" className="text-primary underline underline-offset-4 hover:text-primary/80">
               Privacy Policy
             </Link>
             .
           </p>
-          
-          {/* Link to signup page */}
-          <div className="text-center">
-            <Link 
-              href="/auth/signup" 
-              className="inline-flex items-center space-x-1 text-sm font-medium hover:text-primary transition-colors duration-200"
-            >
-              <span>Don't have an account? Sign up</span>
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          
         </div>
       </div>
     </div>
   )
 }
-
-{/* Add these CSS styles to the document */}
-<style jsx global>{`
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  
-  .transform-gpu {
-    transform: translateZ(0);
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  
-  @keyframes floatSlow {
-    0%, 100% { transform: translateY(0) translateX(0); }
-    25% { transform: translateY(-5px) translateX(5px); }
-    50% { transform: translateY(-10px) translateX(0); }
-    75% { transform: translateY(-5px) translateX(-5px); }
-  }
-  
-  @keyframes draw {
-    from { stroke-dashoffset: 1000; }
-    to { stroke-dashoffset: 0; }
-  }
-  
-  @keyframes pulse {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
-  }
-  
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes flutter {
-    0%, 100% { transform: rotate(0deg) translateY(0); }
-    25% { transform: rotate(1deg) translateY(-2px); }
-    50% { transform: rotate(0deg) translateY(-1px); }
-    75% { transform: rotate(-1deg) translateY(-3px); }
-  }
-  
-  .animate-float {
-    animation: float 5s ease-in-out infinite;
-  }
-  
-  .animate-float-slow {
-    animation: floatSlow 8s ease-in-out infinite;
-  }
-  
-  .animate-draw, .animate-draw-delay, .animate-draw-delay-2 {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: draw 4s forwards;
-  }
-  
-  .animate-draw-delay {
-    animation-delay: 0.5s;
-  }
-  
-  .animate-draw-delay-2 {
-    animation-delay: 1s;
-  }
-  
-  .animate-pulse-subtle {
-    animation: pulse 3s infinite;
-  }
-  
-  .animate-rotate {
-    transform-origin: 130px 120px;
-    animation: rotate 10s linear infinite;
-  }
-  
-  .safe-group, .bitcoin, .ethereum, .gold-bar-1, .gold-bar-2, .gold-bar-3,
-  .cash-1, .cash-2, .cash-3, .cash-4, .candle-up, .candle-down, .data-text {
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  
-  .safe-body:hover, .hover-pop:hover {
-    transform: scale(1.05) translateZ(50px);
-  }
-  
-  .safe-door:hover, .hover-rotate:hover {
-    transform: rotateY(15deg);
-  }
-  
-  .safe-handle:hover, .hover-pull:hover {
-    transform: translateX(3px);
-  }
-  
-  .hover-rise:hover {
-    transform: translateY(-15px);
-  }
-  
-  .hover-rise-1:hover {
-    transform: translateY(-5px) rotateX(10deg);
-  }
-  
-  .hover-rise-2:hover {
-    transform: translateY(-8px) rotateX(15deg);
-  }
-  
-  .hover-rise-3:hover {
-    transform: translateY(-12px) rotateX(20deg);
-  }
-  
-  .hover-flutter:hover {
-    animation: flutter 2s ease-in-out infinite;
-  }
-  
-  .hover-rotate-3d:hover {
-    transform: rotate3d(1, 1, 0, 30deg);
-  }
-  
-  .hover-rotate-3d-alt:hover {
-    transform: rotate3d(-1, 1, 0, 30deg);
-  }
-  
-  .hover-rise-fast:hover {
-    transform: translateY(-20px) scale(1.1);
-  }
-  
-  .hover-sink-fast:hover {
-    transform: translateY(20px) scale(1.1);
-  }
-  
-  .coin-glow {
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .bitcoin:hover .coin-glow, .ethereum:hover .coin-glow {
-    opacity: 0.8;
-  }
-  
-  .candle-glow {
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .candle-up:hover .candle-glow, .candle-down:hover .candle-glow {
-    opacity: 0.7;
-  }
-  
-  .data-text:hover {
-    transform: scale(1.2) translateZ(30px);
-    text-shadow: 0 0 10px currentColor;
-  }
-  
-  .glow-effect {
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .safe-body:hover + .glow-effect {
-    opacity: 0.7;
-  }
-`}</style>
 

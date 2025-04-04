@@ -10,7 +10,7 @@ export function AuthCheck({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check if user is authenticated
-    const auth = localStorage.getItem("YSepBB-auth")
+    const auth = localStorage.getItem("fintrack-auth")
 
     if (!auth) {
       // Redirect to login page if not authenticated

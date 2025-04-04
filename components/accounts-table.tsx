@@ -61,13 +61,14 @@ const accountsData = [
   },
 ]
 
-export default function AccountsTable() {
+// Changed from default export to named export
+export function AccountsTable() {
   const [accounts, setAccounts] = useState(accountsData)
   const isMobile = useMediaQuery("(max-width: 767px)")
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-      <Card>
+      <Card className="backdrop-blur-md bg-black/40 border border-white/10 rounded-xl">
         <CardHeader className="flex flex-row items-center">
           <div>
             <CardTitle>Accounts</CardTitle>
@@ -75,7 +76,7 @@ export default function AccountsTable() {
           </div>
           <Button
             size="sm"
-            className="ml-auto gap-1 rounded-full bg-gradient-to-r from-accent-green to-accent-green/80 text-accent-green-foreground hover:from-accent-green/90 hover:to-accent-green/70"
+            className="ml-auto gap-1 rounded-full bg-[#00f56e]/10 backdrop-blur-md border border-[#00f56e]/20 hover:bg-[#00f56e]/20 hover:border-[#00f56e]/30 text-[#00f56e] transition-all duration-200"
           >
             <Plus className="h-4 w-4" /> Add Account
           </Button>
@@ -84,7 +85,7 @@ export default function AccountsTable() {
           <div className="overflow-auto rounded-lg">
             <Table>
               <TableHeader>
-                <TableRow className="border-b hover:bg-transparent">
+                <TableRow className="border-b border-white/5 hover:bg-transparent">
                   <TableHead>Account</TableHead>
                   {!isMobile && <TableHead>Type</TableHead>}
                   <TableHead className="text-right">Balance</TableHead>
@@ -100,21 +101,21 @@ export default function AccountsTable() {
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.03, duration: 0.2 }}
-                    className="border-b hover:bg-muted/50"
+                    className="border-b border-white/5 hover:bg-white/5"
                   >
                     <TableCell className="font-medium">
                       <div>
                         {account.name}
                         {isMobile && (
                           <div className="mt-1">
-                            <span className="rounded-full bg-muted px-2 py-1 text-xs">{account.type}</span>
+                            <span className="rounded-full bg-white/10 px-2 py-1 text-xs">{account.type}</span>
                           </div>
                         )}
                       </div>
                     </TableCell>
                     {!isMobile && (
                       <TableCell>
-                        <span className="rounded-full bg-muted px-2 py-1 text-xs">{account.type}</span>
+                        <span className="rounded-full bg-white/10 px-2 py-1 text-xs">{account.type}</span>
                       </TableCell>
                     )}
                     <TableCell className="text-right">
@@ -126,8 +127,8 @@ export default function AccountsTable() {
                         <div className="mt-1 flex items-center justify-end">
                           {account.change > 0 ? (
                             <>
-                              <ArrowUpRight className="mr-1 h-3 w-3 text-accent-green" />
-                              <span className="text-xs text-accent-green">{account.change}%</span>
+                              <ArrowUpRight className="mr-1 h-3 w-3 text-[#00f56e]" />
+                              <span className="text-xs text-[#00f56e]">{account.change}%</span>
                             </>
                           ) : account.change < 0 ? (
                             <>
@@ -145,8 +146,8 @@ export default function AccountsTable() {
                         <div className="flex items-center justify-end">
                           {account.change > 0 ? (
                             <>
-                              <ArrowUpRight className="mr-1 h-4 w-4 text-accent-green" />
-                              <span className="text-accent-green">{account.change}%</span>
+                              <ArrowUpRight className="mr-1 h-4 w-4 text-[#00f56e]" />
+                              <span className="text-[#00f56e]">{account.change}%</span>
                             </>
                           ) : account.change < 0 ? (
                             <>
@@ -170,7 +171,10 @@ export default function AccountsTable() {
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="border border-border bg-card">
+                        <DropdownMenuContent
+                          align="end"
+                          className="backdrop-blur-md bg-black/60 border border-white/10"
+                        >
                           <DropdownMenuItem>View Transactions</DropdownMenuItem>
                           <DropdownMenuItem>Edit Account</DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive">Remove Account</DropdownMenuItem>
@@ -187,4 +191,7 @@ export default function AccountsTable() {
     </motion.div>
   )
 }
+
+// Also add a default export for backward compatibility
+export default AccountsTable
 

@@ -99,7 +99,7 @@ export default function Dashboard() {
                 <Wallet className="h-5 w-5 text-accent-green-foreground" />
                 <div className="absolute -inset-0.5 rounded-xl bg-accent-green/20 blur-sm"></div>
               </div>
-              <h1 className="text-xl font-bold">YSepBB</h1>
+              <h1 className="text-xl font-bold">FinTrack</h1>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -145,7 +145,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 md:hidden">
               <div className="relative">
                 <div className="absolute -left-1 -top-1 h-8 w-8 rounded-full bg-accent-green/30 blur-lg dark:bg-accent-green/20"></div>
-                <h1 className="relative text-xl font-bold">YSepBB</h1>
+                <h1 className="relative text-xl font-bold">FinTrack</h1>
               </div>
             </div>
             <div className="flex items-center gap-3">

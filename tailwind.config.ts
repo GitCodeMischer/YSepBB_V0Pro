@@ -64,6 +64,12 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent-green))",
           foreground: "hsl(var(--accent-green-foreground))",
         },
+        "highlight-yellow": {
+          DEFAULT: "hsl(var(--highlight-yellow))",
+        },
+        "highlight-green": {
+          DEFAULT: "hsl(var(--highlight-green))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

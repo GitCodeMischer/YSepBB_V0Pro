@@ -41,14 +41,14 @@ export default function ScenarioBuilder() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-      <Card className="border border-white/10 bg-white/5 shadow-lg backdrop-blur-md">
+      <Card className="glass-card rounded-xl shadow-lg">
         <CardHeader>
           <CardTitle>What-If Scenario Builder</CardTitle>
           <CardDescription>Adjust parameters to see how they affect your financial future</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="retirement">
-            <TabsList className="mb-6 grid w-full grid-cols-3 rounded-full bg-white/5 p-1 backdrop-blur">
+            <TabsList className="mb-6 grid w-full grid-cols-3 rounded-full glass backdrop-blur-md p-1">
               <TabsTrigger value="retirement" className="rounded-full">
                 Retirement
               </TabsTrigger>
@@ -127,10 +127,10 @@ export default function ScenarioBuilder() {
                   >
                     <label className="mb-2 block text-sm font-medium">Risk Tolerance</label>
                     <Select defaultValue="moderate">
-                      <SelectTrigger className="border border-white/10 bg-white/5 backdrop-blur-sm">
+                      <SelectTrigger className="glass-input">
                         <SelectValue placeholder="Select risk tolerance" />
                       </SelectTrigger>
-                      <SelectContent className="border border-white/10 bg-black/90 backdrop-blur-xl">
+                      <SelectContent className="glass-dropdown">
                         <SelectItem value="conservative" className="hover:bg-white/10">
                           Conservative
                         </SelectItem>
@@ -149,7 +149,7 @@ export default function ScenarioBuilder() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.2 }}
                   >
-                    <Button className="w-full rounded-full">Save Scenario</Button>
+                    <Button className="w-full rounded-full glass-button-accent">Save Scenario</Button>
                   </motion.div>
                 </div>
 
@@ -158,7 +158,7 @@ export default function ScenarioBuilder() {
                     config={{
                       savings: {
                         label: "Projected Savings",
-                        color: "hsl(var(--primary))",
+                        color: "#00f56e",
                       },
                     }}
                     className="h-[300px]"
@@ -167,8 +167,8 @@ export default function ScenarioBuilder() {
                       <AreaChart data={forecastData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                           <linearGradient id="colorSavings" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#00f56e" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#00f56e" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <XAxis dataKey="age" axisLine={false} tickLine={false} stroke="hsl(var(--muted-foreground))" />
@@ -178,12 +178,12 @@ export default function ScenarioBuilder() {
                           tickLine={false}
                           stroke="hsl(var(--muted-foreground))"
                         />
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.1)" />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <Area
                           type="monotone"
                           dataKey="savings"
-                          stroke="var(--color-savings)"
+                          stroke="#00f56e"
                           strokeWidth={2}
                           fillOpacity={1}
                           fill="url(#colorSavings)"
@@ -196,10 +196,10 @@ export default function ScenarioBuilder() {
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.2 }}
-                    className="mt-4 rounded-lg border border-white/10 bg-primary/10 p-4 backdrop-blur-sm"
+                    className="mt-4 rounded-lg glass p-4"
                   >
-                    <h3 className="mb-2 text-sm font-medium text-primary">Retirement Projection</h3>
-                    <p className="text-sm text-primary-foreground/80">
+                    <h3 className="mb-2 text-sm font-medium text-[#00f56e]">Retirement Projection</h3>
+                    <p className="text-sm text-white/80">
                       At a {savingsRate}% savings rate and {investmentReturn}% return, you could have approximately{" "}
                       <strong>${(forecastData[forecastData.length - 1].savings / 1000000).toFixed(2)} million</strong>{" "}
                       by age {retirementAge}.

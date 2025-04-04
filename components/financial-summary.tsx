@@ -4,7 +4,7 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from "framer-motion"
 
-export default function FinancialSummary() {
+export function FinancialSummary() {
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -23,7 +23,7 @@ export default function FinancialSummary() {
   return (
     <motion.div className="grid gap-4 md:grid-cols-3" variants={container} initial="hidden" animate="show">
       <motion.div variants={item}>
-        <Card className="overflow-hidden border bg-gradient-to-br from-blue-500/10 to-purple-500/10 shadow-sm backdrop-blur-md">
+        <Card className="backdrop-blur-md bg-black/40 border border-white/10 overflow-hidden rounded-xl shadow-lg">
           <CardHeader className="pb-2">
             <CardDescription>Net Worth</CardDescription>
             <CardTitle className="flex items-baseline text-2xl font-bold">
@@ -35,8 +35,8 @@ export default function FinancialSummary() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="flex items-center">
-              <ArrowUpRight className="mr-1 h-4 w-4 text-accent-green" />
-              <span className="text-sm font-medium text-accent-green">+2.5%</span>
+              <ArrowUpRight className="mr-1 h-4 w-4 text-[#00f56e]" />
+              <span className="text-sm font-medium text-[#00f56e]">+2.5%</span>
               <span className="ml-1 text-xs text-muted-foreground">from last month</span>
             </div>
           </CardContent>
@@ -44,7 +44,7 @@ export default function FinancialSummary() {
       </motion.div>
 
       <motion.div variants={item}>
-        <Card className="overflow-hidden border bg-gradient-to-br from-accent-green/10 to-emerald-500/10 shadow-sm backdrop-blur-md">
+        <Card className="backdrop-blur-md bg-black/40 border border-white/10 overflow-hidden rounded-xl shadow-lg">
           <CardHeader className="pb-2">
             <CardDescription>Monthly Income</CardDescription>
             <CardTitle className="flex items-baseline text-2xl font-bold">
@@ -56,8 +56,8 @@ export default function FinancialSummary() {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="flex items-center">
-              <ArrowUpRight className="mr-1 h-4 w-4 text-accent-green" />
-              <span className="text-sm font-medium text-accent-green">+4.3%</span>
+              <ArrowUpRight className="mr-1 h-4 w-4 text-[#00f56e]" />
+              <span className="text-sm font-medium text-[#00f56e]">+4.3%</span>
               <span className="ml-1 text-xs text-muted-foreground">from last month</span>
             </div>
           </CardContent>
@@ -65,7 +65,7 @@ export default function FinancialSummary() {
       </motion.div>
 
       <motion.div variants={item}>
-        <Card className="overflow-hidden border bg-gradient-to-br from-red-500/10 to-orange-500/10 shadow-sm backdrop-blur-md">
+        <Card className="backdrop-blur-md bg-black/40 border border-white/10 overflow-hidden rounded-xl shadow-lg">
           <CardHeader className="pb-2">
             <CardDescription>Monthly Expenses</CardDescription>
             <CardTitle className="flex items-baseline text-2xl font-bold">
@@ -87,4 +87,7 @@ export default function FinancialSummary() {
     </motion.div>
   )
 }
+
+// For backward compatibility
+export default FinancialSummary
 

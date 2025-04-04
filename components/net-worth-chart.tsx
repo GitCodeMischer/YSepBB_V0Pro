@@ -32,7 +32,7 @@ export default function NetWorthChart() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-      <Card className="border border-white/10 bg-white/5 shadow-lg backdrop-blur-md">
+      <Card className="glass-card rounded-xl shadow-lg">
         <CardHeader>
           <CardTitle>Net Worth Trend</CardTitle>
           <CardDescription>Monthly progression over the past 9 months</CardDescription>
@@ -42,7 +42,7 @@ export default function NetWorthChart() {
             config={{
               netWorth: {
                 label: "Net Worth",
-                color: "hsl(var(--primary))",
+                color: "#00f56e",
               },
             }}
             className="h-[300px]"
@@ -51,8 +51,8 @@ export default function NetWorthChart() {
               <AreaChart data={animatedData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorNetWorth" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#00f56e" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#00f56e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="month" axisLine={false} tickLine={false} stroke="hsl(var(--muted-foreground))" />
@@ -62,12 +62,12 @@ export default function NetWorthChart() {
                   tickLine={false}
                   stroke="hsl(var(--muted-foreground))"
                 />
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.1)" />
                 <ChartTooltip content={<ChartTooltipContent />} wrapperStyle={{ outline: "none" }} />
                 <Area
                   type="monotone"
                   dataKey="netWorth"
-                  stroke="var(--color-netWorth)"
+                  stroke="#00f56e"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorNetWorth)"

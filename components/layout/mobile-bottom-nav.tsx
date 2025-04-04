@@ -68,7 +68,7 @@ export default function MobileBottomNav({ currentRoute, onNavigate }: MobileBott
   }
 
   return (
-    <div className="fixed bottom-0 left-0 z-40 w-full border-t border-border bg-background/80 backdrop-blur-xl">
+    <div className="fixed bottom-0 left-0 z-40 w-full glass-header">
       <nav className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
         {navItems.map((item) => {
           const isActive = currentRoute === item.to
@@ -78,7 +78,7 @@ export default function MobileBottomNav({ currentRoute, onNavigate }: MobileBott
               key={item.to}
               className={cn(
                 "flex flex-col items-center justify-center",
-                isActive ? "text-accent-green" : "text-muted-foreground hover:text-foreground",
+                isActive ? "text-[#00f56e]" : "text-gray-400 hover:text-white",
               )}
               onClick={() => item.to && onNavigate(item.to)}
             >
@@ -86,7 +86,7 @@ export default function MobileBottomNav({ currentRoute, onNavigate }: MobileBott
                 {isActive && (
                   <motion.div
                     layoutId="mobile-nav-bubble"
-                    className="absolute -inset-1 -top-2 z-0 rounded-full bg-accent-green/20"
+                    className="absolute -inset-1 -top-2 z-0 rounded-full bg-[#00f56e]/20 backdrop-blur-md"
                     style={{ borderRadius: 9999 }}
                     transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
                   />

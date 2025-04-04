@@ -33,18 +33,18 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center justify-between border-b border-white/10 px-4">
+      <div className="flex h-16 items-center justify-between border-b border-gray-800 px-4">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0f6] to-[#0f6]/80">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#00f56e] to-[#00f56e]/80">
             <Wallet className="h-5 w-5 text-black" />
-            <div className="absolute -inset-0.5 rounded-xl bg-[#0f6]/20 blur-sm"></div>
+            <div className="absolute -inset-0.5 rounded-xl bg-[#00f56e]/20 blur-sm"></div>
           </div>
           <motion.h1
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             className="text-xl font-bold text-white"
           >
-            YSepBB
+            FinTrack
           </motion.h1>
         </div>
       </div>
@@ -63,11 +63,11 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               variant="ghost"
               className={cn(
                 "relative z-10 w-full justify-start gap-3 rounded-xl px-3 py-2",
-                activeTab === item.id ? "text-[#0f6] hover:bg-transparent" : "text-muted-foreground hover:text-white",
+                activeTab === item.id ? "text-[#00f56e] hover:bg-transparent" : "text-gray-400 hover:text-white",
               )}
               onClick={() => setActiveTab(item.id)}
             >
-              <item.icon className={cn("h-5 w-5", activeTab === item.id && "text-[#0f6]")} />
+              <item.icon className={cn("h-5 w-5", activeTab === item.id && "text-[#00f56e]")} />
               <span>{item.label}</span>
             </Button>
           </motion.div>
@@ -75,7 +75,7 @@ export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       </nav>
 
       <div className="mt-auto p-3">
-        <Button className="w-full justify-start gap-2 rounded-xl bg-gradient-to-r from-[#0f6] to-[#0f6]/80 text-black hover:from-[#0f6]/90 hover:to-[#0f6]/70">
+        <Button className="w-full justify-start gap-2 rounded-xl bg-gradient-to-r from-[#00f56e] to-[#00f56e]/80 text-black hover:from-[#00f56e]/90 hover:to-[#00f56e]/70">
           <PlusCircle className="h-5 w-5" />
           <span>Add Account</span>
         </Button>
