@@ -1,27 +1,29 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 
-export function useMediaQuery(query: string): boolean {
+export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
+  
   useEffect(() => {
-    setMounted(true)
-
+    // Initial check on client side only
     const media = window.matchMedia(query)
-
-    // Update the state initially
+    
+    // Initial value on mount
     setMatches(media.matches)
-
-    // Set up the listener to update the state
-    const listener = () => setMatches(media.matches)
+    
+    // Update matches when media query changes
+    const listener = (e: MediaQueryListEvent) => {
+      setMatches(e.matches)
+    }
+    
+    // Add the listener to watch for changes
     media.addEventListener("change", listener)
-
+    
+    // Clean up on unmount
     return () => media.removeEventListener("change", listener)
   }, [query])
-
-  // Return false on the server, the correct value on the client
-  return mounted ? matches : false
+  
+  return matches
 }
 

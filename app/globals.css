@@ -4,116 +4,129 @@
 
 @layer base {
   :root {
-    /* Light mode - refined color palette based on reference image */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-
-    /* Bright green accent from reference image */
-    --primary: 142 70% 50%;
-    --primary-foreground: 240 5% 10%;
-
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-
-    --accent: 142 70% 95%;
-    --accent-foreground: 142 70% 30%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142 70% 50%;
-
-    --radius: 0.75rem;
-
-    /* Finance app specific colors */
-    --neon-green: 142 70% 50%;
-    --neon-green-light: 142 70% 95%;
-    --glass-bg: 0 0% 100% / 0.8;
-    --glass-border: 240 5.9% 90% / 0.5;
-    --glass-highlight: 240 5.9% 90% / 0.8;
-
-    /* Highlight colors from reference image */
-    --highlight-yellow: 60 100% 88%;
-    --highlight-green: 142 70% 88%;
+    /* Dark Mode by Default (Mobile First) */
+    --background: 0 0% 10%;          /* #1A1A1A - Dark background */
+    --foreground: 0 0% 100%;         /* #FFFFFF */
     
-    /* Accent color for positive/negative values */
-    --accent-green: 142 76% 36%;
-    --accent-red: 0 84% 60%;
+    --card: 0 0% 13%;                /* #212121 */
+    --card-foreground: 0 0% 100%;    /* #FFFFFF */
     
-    /* Font sizes */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
+    --popover: 0 0% 15%;             /* #262626 */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF */
     
-    /* Animation speeds for better performance */
-    --animation-fast: 150ms;
-    --animation-medium: 300ms;
-    --animation-slow: 500ms;
+    --primary: 85 100% 60%;          /* #7CFF00 - Neon Green */
+    --primary-foreground: 0 0% 0%;   /* #000000 */
+    
+    --secondary: 0 0% 15%;           /* #262626 */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --muted: 0 0% 20%;               /* #333333 */
+    --muted-foreground: 0 0% 60%;    /* #999999 */
+    
+    --accent: 85 100% 60%;           /* #7CFF00 - Neon Green */
+    --accent-foreground: 0 0% 0%;    /* #000000 */
+    
+    --destructive: 0 100% 60%;       /* #FF3D3D */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --border: 0 0% 20%;              /* #333333 */
+    --input: 0 0% 15%;               /* #262626 */
+    --ring: 85 100% 60%;             /* #7CFF00 - Neon Green */
+    
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
   }
 
   .dark {
-    /* Dark mode - refined color palette based on reference image */
-    --background: 225 25% 8%;
-    --foreground: 210 40% 98%;
-
-    --card: 227 27% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 227 27% 12%;
-    --popover-foreground: 210 40% 98%;
-
-    /* Vibrant neon green for primary elements */
-    --primary: 142 85% 55%;
-    --primary-foreground: 227 27% 10%;
-
-    --secondary: 227 27% 15%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 227 27% 15%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 142 85% 15%;
-    --accent-foreground: 142 85% 55%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 227 27% 18%;
-    --input: 227 27% 18%;
-    --ring: 142 85% 55%;
-
-    /* Finance app specific colors */
-    --neon-green: 142 85% 55%;
-    --neon-green-light: 142 85% 20%;
-    --glass-bg: 227 27% 12% / 0.8;
-    --glass-border: 227 27% 18% / 0.5;
-    --glass-highlight: 227 27% 18% / 0.8;
-
-    /* Chart colors based on reference image */
-    --chart-purple: 267 100% 75%;
-    --chart-blue: 199 100% 65%;
-    --chart-green: 142 85% 55%;
-    --chart-yellow: 45 100% 65%;
+    /* Dark Mode - Base Colors */
+    --background: 0 0% 7%;          /* #121212 */
+    --foreground: 0 0% 100%;        /* #FFFFFF 95% opacity */
     
-    /* Accent color for positive/negative values */
-    --accent-green: 142 85% 55%;
-    --accent-red: 0 84% 65%;
+    --card: 0 0% 12%;               /* #1E1E1E */
+    --card-foreground: 0 0% 100%;   /* #FFFFFF 95% opacity */
+    
+    --popover: 0 0% 15%;            /* #252525 */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF 95% opacity */
+    
+    --modal: 0 0% 15%;              /* #252525 */
+    --modal-foreground: 0 0% 100%;  /* #FFFFFF 95% opacity */
+    
+    --input: 0 0% 16%;              /* #2A2A2A */
+    --input-foreground: 0 0% 100%;  /* #FFFFFF 95% opacity */
+    
+    /* Text Hierarchy */
+    --primary-text: 0 0% 100%;      /* #FFFFFF 95% opacity */
+    --secondary-text: 0 0% 100%;    /* #FFFFFF 70% opacity */
+    --disabled-text: 0 0% 100%;     /* #FFFFFF 45% opacity */
+    
+    /* Border/Divider */
+    --border: 0 0% 100%;            /* #FFFFFF 15% opacity */
+    --card-border: 0 0% 100%;       /* #FFFFFF 8% opacity */
+    --focus-ring: 158 85% 58%;      /* #36F09E 50% opacity */
+    
+    /* Accent Colors - Green Spectrum */
+    --primary: 158 85% 58%;         /* #36F09E */
+    --primary-foreground: 0 0% 7%;
+    
+    --primary-dark: 158 76% 53%;    /* #32DB93 */
+    --primary-light: 158 100% 75%;  /* #7FFFC5 */
+    --primary-bg: 158 85% 58%;      /* #36F09E 15% opacity */
+    
+    /* Blue Spectrum */
+    --secondary: 232 91% 60%;       /* #3D5AF6 */
+    --secondary-foreground: 0 0% 100%;
+    
+    --secondary-dark: 233 78% 53%;  /* #3251DB */
+    --secondary-light: 233 100% 74%;/* #7B8FFF */
+    --secondary-bg: 232 91% 60%;    /* #3D5AF6 15% opacity */
+    
+    /* Red Spectrum */
+    --destructive: 350 100% 68%;    /* #FF5C75 */
+    --destructive-foreground: 0 0% 100%;
+    
+    --destructive-dark: 350 78% 61%;/* #E6526A */
+    --destructive-light: 350 100% 78%;/* #FF8DA0 */
+    --destructive-bg: 350 100% 68%; /* #FF5C75 15% opacity */
+    
+    /* Purple Spectrum */
+    --premium: 263 84% 66%;         /* #8B5CF6 */
+    --premium-foreground: 0 0% 100%;
+    
+    --premium-dark: 263 71% 60%;    /* #7D52E0 */
+    --premium-light: 263 93% 76%;   /* #A78BFA */
+    --premium-bg: 263 84% 66%;      /* #8B5CF6 15% opacity */
+    
+    /* Yellow Spectrum */
+    --warning: 48 100% 50%;         /* #FFCC00 */
+    --warning-foreground: 0 0% 7%;
+    
+    --warning-dark: 48 100% 45%;    /* #E6B800 */
+    --warning-light: 48 100% 60%;   /* #FFD633 */
+    --warning-bg: 48 100% 50%;      /* #FFCC00 15% opacity */
+    
+    /* UI Component Colors */
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    
+    --accent: 158 85% 58%;
+    --accent-foreground: 0 0% 7%;
+    
+    /* Positive/Negative */
+    --positive: 158 85% 58%;        /* #36F09E */
+    --negative: 350 100% 68%;       /* #FF5C75 */
+    
+    /* Shadows - Dark Mode */
+    --shadow-1: 0px 2px 4px rgba(0, 0, 0, 0.5);
+    --shadow-2: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    --shadow-3: 0px 8px 16px rgba(0, 0, 0, 0.5);
+    --shadow-4: 0px 16px 24px rgba(0, 0, 0, 0.5);
+    --shadow-inner: inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0px 0px 12px rgba(54, 240, 158, 0.35);
   }
 }
 
@@ -121,713 +134,471 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-tap-highlight-color: transparent;
   }
   
-  /* Typography: Use the custom font variables */
+  /* Typography System */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-montserrat);
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
   }
   
   p, span, div, button, input, textarea, select {
-    font-family: var(--font-inter);
+    font-family: 'Inter', sans-serif;
   }
   
-  /* Improved focus styles for accessibility */
+  /* Financial numbers use monospace for better alignment */
+  .finance-number {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  
+  /* Type Scale with precise line heights */
+  .text-display {
+    font-size: 42px;
+    line-height: 48px;
+    font-weight: 700;
+  }
+  
+  .text-h1 {
+    font-size: 32px;
+    line-height: 38px;
+    font-weight: 700;
+  }
+  
+  .text-h2 {
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 600;
+  }
+  
+  .text-h3 {
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 600;
+  }
+  
+  .text-h4 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  
+  .text-subtitle1 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+  
+  .text-subtitle2 {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+  
+  .text-body1 {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+  
+  .text-body2 {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+  
+  .text-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+  }
+  
+  .text-overline {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Financial Number Display */
+  .balance-primary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+  }
+  
+  .balance-secondary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .percentage-change {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .transaction-amount {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  /* Focus styles for accessibility */
   :focus-visible {
-    @apply outline-primary outline-offset-2;
+    @apply outline-none ring-2 ring-[hsl(var(--focus-ring))];
+    outline-offset: 2px;
   }
 }
 
 @layer components {
-  /* Glassmorphism effects */
-  .glass-header {
-    @apply bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm;
-  }
-
-  .glass-dropdown {
-    @apply rounded-xl border border-border/50 bg-background/80 backdrop-blur-md shadow-lg;
-  }
-
-  .glass-button {
-    @apply rounded-full hover:bg-foreground/5 transition-all duration-200;
-  }
-
-  .glass-card {
-    @apply bg-card/90 backdrop-blur-md border border-border/50 rounded-xl shadow-sm transition-all duration-300;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Modern financial card styles */
-  .finance-card {
-    @apply bg-card rounded-xl border border-border/30 shadow-lg p-5 transition-all duration-300;
-  }
-
-  .finance-card-gradient {
-    @apply rounded-xl p-5 relative overflow-hidden transition-all duration-300;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)) 100%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  }
-
-  .finance-card-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, hsla(var(--primary), 0.3) 0%, hsla(var(--primary), 0.05) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  .finance-card-accent {
-    @apply rounded-xl relative overflow-hidden;
-    background: linear-gradient(135deg, hsl(var(--primary)/0.2) 0%, hsl(var(--primary)/0.05) 100%);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  }
-
-  .finance-card-dark {
-    @apply rounded-xl p-5 relative overflow-hidden;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)/0.9) 100%);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  }
-
-  .finance-card-dark::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, hsla(var(--primary), 0.3) 0%, hsla(var(--primary), 0.05) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
-  /* Modern buttons */
-  .btn-finance-primary {
-    @apply bg-primary text-primary-foreground rounded-lg px-4 py-2 font-medium shadow-md hover:shadow-lg 
-    transition-all duration-200 flex items-center justify-center gap-2 hover:brightness-110 active:brightness-90;
-  }
-
-  .btn-finance-secondary {
-    @apply bg-secondary text-secondary-foreground rounded-lg px-4 py-2 font-medium shadow-sm hover:shadow 
-    transition-all duration-200 flex items-center justify-center gap-2;
-  }
-
-  .btn-finance-outline {
-    @apply border border-border bg-transparent text-foreground rounded-lg px-4 py-2 font-medium
-    transition-all duration-200 hover:bg-foreground/5 flex items-center justify-center gap-2;
-  }
-
-  .btn-finance-ghost {
-    @apply bg-transparent text-foreground rounded-lg px-4 py-2 font-medium
-    transition-all duration-200 hover:bg-foreground/5 flex items-center justify-center gap-2;
-  }
-
-  .btn-finance-icon {
-    @apply rounded-full p-2 transition-all duration-200 flex items-center justify-center;
-  }
-
-  /* Slide button for transfers (like in first image) */
-  .slide-to-action {
-    @apply relative flex items-center px-1.5 py-1.5 rounded-full bg-primary/10 cursor-pointer overflow-hidden w-full;
-  }
-
-  .slide-to-action-thumb {
-    @apply flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground 
-    shadow-md z-10 transition-all duration-300;
+  /* CRITICAL: Layout structure - fixes for placement issues */
+  .app-layout {
+    @apply flex flex-col min-h-screen w-full relative overflow-x-hidden;
   }
   
-  .slide-to-action-track {
-    @apply absolute inset-0 flex items-center justify-end px-4 text-sm font-medium text-primary/70;
-  }
-
-  /* Finance Dashboard Components */
-  .balance-card {
-    @apply finance-card-gradient p-5 space-y-2;
-  }
-
-  .balance-amount {
-    @apply text-2xl font-bold;
-  }
-
-  .balance-change {
-    @apply text-sm flex items-center gap-1;
-  }
-
-  .balance-change-positive {
-    color: hsl(var(--accent-green));
-    @apply flex items-center gap-1;
-  }
-
-  .balance-change-negative {
-    color: hsl(var(--accent-red));
-    @apply flex items-center gap-1;
-  }
-
-  .transaction-item {
-    @apply flex items-center justify-between py-3 border-b border-border/30 last:border-0;
-  }
-
-  .transaction-info {
-    @apply flex items-center gap-3;
-  }
-
-  .transaction-avatar {
-    @apply h-10 w-10 rounded-full flex items-center justify-center text-white font-medium text-sm bg-primary/20;
-  }
-
-  .transaction-icon {
-    @apply h-10 w-10 rounded-full flex items-center justify-center text-primary bg-primary/10;
-  }
-
-  .transaction-content {
-    @apply flex flex-col;
-  }
-
-  .transaction-title {
-    @apply font-medium;
-  }
-
-  .transaction-subtitle {
-    @apply text-xs text-muted-foreground;
-  }
-
-  .transaction-amount {
-    @apply font-medium;
-  }
-
-  .transaction-amount-positive {
-    color: hsl(var(--accent-green));
-  }
-
-  .transaction-amount-negative {
-    color: hsl(var(--accent-red));
-  }
-
-  .glass-input {
-    @apply bg-background/80 backdrop-blur-md border border-border/50 rounded-lg focus:border-primary/50 focus:ring-1 focus:ring-primary/50;
-  }
-
-  .glass-sidebar {
-    @apply bg-gradient-to-b from-background to-background/95 backdrop-blur-md border-r border-border/30 overflow-hidden shadow-sm;
-  }
-
-  /* Sidebar styles with improved contrast for light mode */
-  .sidebar-nav-connection {
-    @apply fixed top-16 bottom-0 left-0 z-30 flex flex-col overflow-hidden;
-    @apply border-r backdrop-blur-md shadow-lg transition-all;
+  .app-main-container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    position: relative;
   }
   
-  .dark .sidebar-nav-connection {
-    @apply bg-gradient-to-b from-background via-background to-background;
-    @apply border-white/5 shadow-black/5;
+  /* Mobile Header */
+  .mobile-header {
+    @apply fixed top-0 left-0 right-0 z-40 h-16 
+           flex items-center justify-between px-4
+           bg-background/90 backdrop-blur-md border-b border-border/50;
   }
   
-  /* Light mode specific styles to improve contrast */
-  :root:not(.dark) .sidebar-nav-connection {
-    @apply bg-gradient-to-b from-gray-100 via-gray-50 to-white;
-    @apply border-gray-200;
+  /* Desktop Sidebar */
+  .desktop-sidebar {
+    @apply hidden md:flex md:flex-col 
+           fixed top-0 bottom-0 left-0 z-40
+           w-64 border-r border-border/50
+           bg-background/90 backdrop-blur-md
+           transition-all duration-300 ease-in-out;
   }
   
-  /* Sidebar nav item styles with better light mode contrast */
-  .sidebar-nav-item {
-    @apply w-full text-left flex items-center px-3 py-2.5 rounded-lg;
-    @apply transition-all duration-200;
+  .desktop-sidebar.collapsed {
+    @apply w-20;
   }
   
-  .dark .sidebar-nav-item {
-    @apply text-white/60 hover:text-white hover:bg-white/5;
+  /* Main Content Area */
+  .main-content {
+    @apply flex-1 pt-16 md:pt-0 md:pl-64
+           transition-all duration-300 ease-in-out;
   }
   
-  .dark .sidebar-nav-item-active {
-    @apply bg-gradient-to-r from-primary/20 to-primary/5 text-white;
+  .main-content.sidebar-collapsed {
+    @apply md:pl-20;
   }
   
-  :root:not(.dark) .sidebar-nav-item {
-    @apply text-gray-700 hover:text-gray-900 hover:bg-gray-200/50;
-  }
-  
-  :root:not(.dark) .sidebar-nav-item-active {
-    @apply bg-gradient-to-r from-primary/20 to-primary/10 text-gray-900;
-  }
-  
-  /* Sidebar section headings */
-  .sidebar-section-heading {
-    @apply text-xs uppercase tracking-wider px-3 mb-2;
-  }
-  
-  .dark .sidebar-section-heading {
-    @apply text-white/50;
-  }
-  
-  :root:not(.dark) .sidebar-section-heading {
-    @apply text-gray-500 font-medium;
-  }
-  
-  /* Sidebar submenu items */
-  .sidebar-submenu-container {
-    @apply overflow-hidden pl-9 mt-1 mb-1;
-  }
-  
-  .sidebar-submenu {
-    @apply border-l-2 pl-2 py-1 space-y-1;
-  }
-  
-  .dark .sidebar-submenu {
-    @apply border-white/10;
-  }
-  
-  :root:not(.dark) .sidebar-submenu {
-    @apply border-gray-200;
-  }
-  
-  .sidebar-submenu-item {
-    @apply flex items-center gap-2 px-3 py-1.5 text-sm rounded-md;
-    @apply transition-all duration-200;
-  }
-  
-  .dark .sidebar-submenu-item {
-    @apply text-white/50 hover:text-white hover:bg-white/5;
-  }
-  
-  .dark .sidebar-submenu-item-active {
-    @apply bg-primary/10 text-white;
-  }
-  
-  :root:not(.dark) .sidebar-submenu-item {
-    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-200/50;
-  }
-  
-  :root:not(.dark) .sidebar-submenu-item-active {
-    @apply bg-primary/10 text-gray-900;
-  }
-  
-  /* Sidebar toggle button */
-  .sidebar-toggle-btn {
-    @apply p-1.5 rounded-lg transition-all duration-200;
-    @apply hover:scale-105 active:scale-95;
-  }
-  
-  .dark .sidebar-toggle-btn {
-    @apply text-white/70 hover:text-white hover:bg-white/5;
-  }
-  
-  :root:not(.dark) .sidebar-toggle-btn {
-    @apply text-gray-500 hover:text-gray-900 hover:bg-gray-200/70;
-  }
-
-  /* Desktop logo position */
-  .desktop-logo-position {
-    position: absolute;
-    left: 1.5rem;
-    z-index: 45;
-  }
-  
-  /* Enhance scrollbar */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-border/50 rounded-full hover:bg-border;
-  }
-
-  /* Tooltip enhancements */
-  .tooltip-enhanced {
-    @apply bg-primary/90 text-primary-foreground border-primary/40 shadow-lg shadow-primary/20 backdrop-blur-sm;
-  }
-
-  /* Neon effects */
-  .neon-green {
-    @apply text-primary;
-  }
-
-  .neon-green-bg {
-    @apply bg-primary;
-  }
-
-  .neon-green-border {
-    @apply border-primary/30;
-  }
-  
-  .neon-green-glow {
-    @apply text-primary;
-    text-shadow: 0 0 15px theme('colors.primary.DEFAULT');
-  }
-  
-  /* Custom animations for sidebar/navigation */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideInRight {
-    from { transform: translateX(-10px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  
-  @keyframes slideInLeft {
-    from { transform: translateX(10px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-in-out forwards;
-  }
-  
-  .animate-slideInRight {
-    animation: slideInRight 0.3s ease-in-out forwards;
-  }
-  
-  .animate-slideInLeft {
-    animation: slideInLeft 0.3s ease-in-out forwards;
-  }
-
-  .glassmorphism {
-    @apply bg-background/80 backdrop-blur-md border border-border/50;
-  }
-  
-  /* glassmorphism-mobile class for mobile nav dropdown */
-  .glass-dropdown-mobile {
-    @apply bg-background/95 backdrop-blur-md border-t border-border/50 shadow-md;
-  }
-
-  /* Glassmorphism hover effects - optimized for performance */
-  .glass-hover {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  .glass-hover:hover {
-    @apply bg-foreground/5 border-foreground/20;
-    transform: translateY(-2px);
-  }
-
-  .glass-hover-scale {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  .glass-hover-scale:hover {
-    @apply bg-foreground/5 border-foreground/20;
-    transform: scale(1.02);
-  }
-
-  .glass-hover-glow {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  /* Light mode specific components based on reference image */
-  .light-card {
-    @apply bg-white rounded-lg border border-border/30 shadow-sm;
-  }
-
-  .light-sidebar {
-    @apply bg-secondary border-r border-border;
-  }
-
-  .light-header {
-    @apply bg-white border-b border-border/50 shadow-sm;
-  }
-
-  .light-button-primary {
-    @apply bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-full px-4 py-2 transition-colors;
-  }
-
-  .light-button-secondary {
-    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium rounded-full px-4 py-2 transition-colors;
-  }
-
-  .light-progress {
-    @apply bg-secondary rounded-full overflow-hidden;
-  }
-
-  .light-progress-bar {
-    @apply bg-primary h-full rounded-full;
-  }
-
-  .light-highlight-yellow {
-    @apply bg-[#FFFA96] bg-opacity-40 rounded-md px-2 py-1;
-  }
-
-  .light-highlight-green {
-    @apply bg-[#BEFF7D] bg-opacity-40 rounded-md px-2 py-1;
-  }
-
-  /* Card styles */
-  .card-modern {
-    @apply rounded-lg border border-border/50 bg-card p-4 shadow-sm transition-all duration-200 hover:shadow-md;
-  }
-
-  .card-glass {
-    @apply rounded-lg border border-border/50 bg-card/60 p-4 shadow-sm backdrop-blur-md transition-all duration-200 hover:shadow-md;
-  }
-
-  /* Input styles */
-  .input-modern {
-    @apply rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus:ring-primary/20 focus-visible:ring-offset-2;
-  }
-
-  /* Custom scrollbar */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-transparent rounded-full;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
-  }
-
-  /* Hide scrollbar but allow scrolling */
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
-
-  /* Sidebar bottom bar */
-  .sidebar-bottom-bar {
-    @apply border-t border-border/30 p-3 space-y-3 bg-gradient-to-t from-background/95 to-transparent backdrop-blur-sm;
-  }
-  
-  /* Skeleton loaders */
-  .skeleton-pulse {
-    @apply animate-pulse bg-muted rounded;
-  }
-  
-  /* Custom badge styles */
-  .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
-  }
-  
-  .badge-success {
-    @apply bg-green-500/10 text-green-500 dark:bg-green-500/20;
-  }
-  
-  .badge-warning {
-    @apply bg-yellow-500/10 text-yellow-500 dark:bg-yellow-500/20;
-  }
-  
-  .badge-error {
-    @apply bg-red-500/10 text-red-500 dark:bg-red-500/20;
-  }
-  
-  .badge-info {
-    @apply bg-blue-500/10 text-blue-500 dark:bg-blue-500/20;
-  }
-
-  /* Mobile navigation bar styles */
+  /* Mobile Bottom Navigation */
   .mobile-nav-bar {
-    @apply bg-background/90 backdrop-blur-lg border-t border-border/40 shadow-lg;
-    height: 4rem; /* Fixed height */
+    @apply md:hidden fixed bottom-0 left-0 right-0 z-40
+           h-16 bg-background/90 backdrop-blur-md
+           border-t border-border/50 flex items-center justify-around;
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   
-  /* Collapsible sidebar styles */
-  .sidebar-collapsed {
-    @apply w-20 transition-all duration-300 ease-in-out;
+  /* Page content container */
+  .page-container {
+    @apply p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full;
+    min-height: calc(100vh - 64px - 64px); /* viewport - header - bottom nav */
   }
   
-  .sidebar-expanded {
-    @apply w-64 transition-all duration-300 ease-in-out;
+  /* Dashboard Grid Layout */
+  .dashboard-grid {
+    @apply grid gap-4 sm:gap-6 pb-20 md:pb-8;
+    grid-template-columns: 1fr;
   }
   
-  /* Mobile menu drawer - for the "More" option in mobile nav */
+  @media (min-width: 640px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  /* Dashboard card sizing */
+  .dashboard-card {
+    @apply rounded-xl border border-border/30 bg-card p-5 shadow-sm;
+  }
+  
+  .dashboard-card.span-2 {
+    @apply col-span-1 sm:col-span-2;
+  }
+  
+  .dashboard-card.span-full {
+    @apply col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-4;
+  }
+  
+  /* Fix for collapsible sidebar */
+  .sidebar-nav-connection {
+    @apply fixed top-0 bottom-0 left-0 z-30 
+           flex flex-col border-r h-full
+           transition-all duration-300 ease-in-out;
+    width: 256px; /* 64 * 4px (tailwind's default) */
+  }
+  
+  .sidebar-nav-connection.collapsed {
+    width: 80px; /* 20 * 4px */
+  }
+  
+  /* Sidebar content */
+  .sidebar-content {
+    @apply flex flex-col h-full overflow-y-auto overflow-x-hidden;
+  }
+  
+  /* Mobile menu drawer */
   .mobile-menu-drawer {
-    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-md;
-    @apply transform transition-transform duration-300 ease-in-out;
+    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-md
+           transform transition-transform duration-300 ease-in-out;
   }
   
-  .mobile-menu-drawer-enter {
-    transform: translateY(100%);
+  /* Media query helpers that actually work */
+  .mobile-only {
+    @apply block md:hidden;
   }
   
-  .mobile-menu-drawer-enter-active {
-    transform: translateY(0);
+  .desktop-only {
+    @apply hidden md:block;
   }
   
-  .mobile-menu-drawer-exit {
-    transform: translateY(0);
-  }
-  
-  .mobile-menu-drawer-exit-active {
-    transform: translateY(100%);
-  }
-  
-  /* iOS-style bottom nav indicator */
-  .ios-nav-indicator {
-    @apply absolute -bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full;
-    transform: translateX(-50%);
-  }
-
-  /* Content area adjustments for fixed sidebar */
-  .content-with-sidebar {
-    @apply ml-0 md:ml-64 transition-all duration-300 ease-in-out;
-  }
-  
-  .content-with-collapsed-sidebar {
-    @apply ml-0 md:ml-20 transition-all duration-300 ease-in-out;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .text-gradient {
-    @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
-  }
-
-  .bg-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-primary/70;
-  }
-
-  /* Card background gradients - optimized for light/dark mode */
-  .bg-gradient-card-1 {
-    @apply bg-gradient-to-br from-blue-500/5 to-purple-500/5 dark:from-[#2a3a80]/40 dark:to-[#4c2a84]/40;
-  }
-
-  .bg-gradient-card-2 {
-    @apply bg-gradient-to-br from-emerald-500/5 to-teal-500/5 dark:from-[#1a513a]/40 dark:to-[#1a5146]/40;
-  }
-
-  .bg-gradient-card-3 {
-    @apply bg-gradient-to-br from-amber-500/5 to-orange-500/5 dark:from-[#5e4a1a]/40 dark:to-[#5e3a1a]/40;
-  }
-
-  .bg-gradient-card-4 {
-    @apply bg-gradient-to-br from-pink-500/5 to-rose-500/5 dark:from-[#4a1a3a]/40 dark:to-[#5e1a2a]/40;
-  }
-
-  /* Light mode specific utilities */
-  .light-border {
-    @apply border border-border/50;
-  }
-
-  .light-shadow {
-    @apply shadow-sm;
-  }
-  
-  /* Text colors for positive/negative values */
-  .text-positive {
-    @apply text-[hsl(var(--accent-green))];
-  }
-  
-  .text-negative {
-    @apply text-[hsl(var(--accent-red))];
-  }
-  
-  /* Responsive typography utilities */
-  .text-responsive-xs {
-    @apply text-xs md:text-sm;
-  }
-  
-  .text-responsive-sm {
-    @apply text-sm md:text-base;
-  }
-  
-  .text-responsive-base {
-    @apply text-base md:text-lg;
-  }
-  
-  .text-responsive-lg {
-    @apply text-lg md:text-xl;
-  }
-  
-  .text-responsive-xl {
-    @apply text-xl md:text-2xl;
-  }
-  
-  .text-responsive-2xl {
-    @apply text-2xl md:text-3xl;
-  }
-  
-  /* Container width constraints for better readability */
-  .container-narrow {
-    @apply max-w-3xl mx-auto px-4 sm:px-6;
-  }
-  
-  .container-default {
-    @apply max-w-5xl mx-auto px-4 sm:px-6;
-  }
-  
-  .container-wide {
-    @apply max-w-7xl mx-auto px-4 sm:px-6;
-  }
-  
-  /* Performance optimized animation utilities */
-  .animate-gpu {
-    @apply will-change-transform;
-    transform: translateZ(0);
-  }
-  
-  /* Smooth transition utilities */
-  .transition-base {
-    @apply transition-all duration-200 ease-in-out;
-  }
-  
-  .transition-delayed {
-    @apply transition-all duration-300 ease-in-out delay-100;
-  }
-  
-  /* Responsive padding utilities */
-  .p-responsive {
+  /* Content spacing helpers */
+  .responsive-p {
     @apply p-4 sm:p-6 md:p-8;
   }
   
-  .px-responsive {
+  .responsive-px {
     @apply px-4 sm:px-6 md:px-8;
   }
   
-  .py-responsive {
+  .responsive-py {
     @apply py-4 sm:py-6 md:py-8;
   }
   
-  /* Aspect ratios for cards */
-  .aspect-card {
-    @apply aspect-[4/3];
+  .responsive-my {
+    @apply my-4 sm:my-6 md:my-8;
   }
   
-  .aspect-square {
-    @apply aspect-[1/1];
+  .responsive-mx {
+    @apply mx-4 sm:mx-6 md:mx-8;
   }
   
-  .aspect-video {
-    @apply aspect-[16/9];
+  /* Main Layout */
+  .app-layout {
+    @apply flex flex-col min-h-screen w-full relative overflow-x-hidden;
+  }
+  
+  /* Mobile Card Styles (like in the reference image) */
+  .finance-card {
+    @apply bg-card rounded-xl border border-white/5 p-5;
+  }
+  
+  .neon-card {
+    @apply relative rounded-xl overflow-hidden;
+    background-color: #7CFF00;
+    box-shadow: 0 0 20px rgba(124, 255, 0, 0.3);
+  }
+  
+  .neon-card-dark {
+    @apply relative bg-black/80 rounded-xl overflow-hidden p-5;
+    border: 1px solid rgba(124, 255, 0, 0.3);
+  }
+  
+  /* Transaction List Items */
+  .transaction-item {
+    @apply flex items-center justify-between py-3.5 border-b border-white/5 last:border-0;
+  }
+  
+  .transaction-avatar {
+    @apply h-10 w-10 rounded-full flex items-center justify-center bg-secondary text-primary;
+  }
+  
+  .transaction-content {
+    @apply flex-1 mx-3;
+  }
+  
+  .transaction-amount {
+    @apply font-medium font-mono;
+  }
+  
+  .transaction-amount-positive {
+    @apply text-primary;
+  }
+  
+  .transaction-amount-negative {
+    @apply text-destructive;
+  }
+  
+  /* Action Buttons */
+  .action-button {
+    @apply flex flex-col items-center justify-center gap-1 p-2 rounded-lg;
+  }
+  
+  .action-button-icon {
+    @apply h-10 w-10 rounded-lg flex items-center justify-center bg-secondary text-primary;
+  }
+  
+  .action-button-label {
+    @apply text-xs text-muted-foreground;
+  }
+  
+  /* Transfer Money UI */
+  .transfer-section {
+    @apply mt-5 rounded-xl bg-secondary p-4;
+  }
+  
+  .transfer-row {
+    @apply flex items-center justify-between py-2.5;
+  }
+  
+  .recipient-grid {
+    @apply grid grid-cols-4 gap-3 mt-3;
+  }
+  
+  .recipient-item {
+    @apply flex flex-col items-center;
+  }
+  
+  .recipient-avatar {
+    @apply h-12 w-12 rounded-full mb-1 border-2 border-transparent;
+  }
+  
+  .recipient-avatar.active {
+    @apply border-primary;
+  }
+  
+  .recipient-name {
+    @apply text-xs text-center text-foreground/80;
+  }
+  
+  /* Slide to transfer button */
+  .slide-to-action {
+    @apply relative flex items-center px-1.5 py-1.5 rounded-full bg-primary/10 cursor-pointer overflow-hidden w-full;
+  }
+  
+  .slide-to-action-thumb {
+    @apply flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-md z-10;
+  }
+  
+  .slide-to-action-track {
+    @apply absolute inset-0 flex items-center justify-end px-4 text-sm font-medium text-primary;
   }
 
-  /* Enhanced scrollbar utilities */
+  /* Bottom Navigation Bar */
+  .bottom-nav-bar {
+    @apply fixed bottom-0 left-0 right-0 z-40 h-16 bg-card border-t border-white/5 flex items-center justify-around px-4;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center;
+  }
+  
+  .bottom-nav-icon {
+    @apply h-6 w-6 mb-1 text-muted-foreground;
+  }
+  
+  .bottom-nav-icon.active {
+    @apply text-primary;
+  }
+  
+  .bottom-nav-label {
+    @apply text-xs text-muted-foreground;
+  }
+  
+  .bottom-nav-label.active {
+    @apply text-primary;
+  }
+  
+  /* Balance Display */
+  .balance-section {
+    @apply my-4;
+  }
+  
+  .balance-label {
+    @apply text-sm text-muted-foreground mb-1;
+  }
+  
+  .balance-amount {
+    @apply text-xl font-bold;
+  }
+  
+  .balance-hidden {
+    @apply flex items-center text-primary;
+  }
+
+  /* Segmented Control (Send/Request/Payment) */
+  .segmented-control {
+    @apply flex bg-secondary rounded-full p-1 mb-4;
+  }
+  
+  .segment-button {
+    @apply flex-1 py-2 text-sm text-center rounded-full;
+  }
+  
+  .segment-button.active {
+    @apply bg-primary text-primary-foreground font-medium;
+  }
+}
+
+/* Special effects */
+.neon-text {
+  @apply text-primary;
+  text-shadow: 0 0 5px rgba(124, 255, 0, 0.5);
+}
+
+.neon-border {
+  @apply border border-primary;
+  box-shadow: 0 0 5px rgba(124, 255, 0, 0.3);
+}
+
+.card-number {
+  @apply font-mono text-base tracking-wider;
+  letter-spacing: 0.2em;
+}
+
+/* Modern financial card styles */
+.finance-card {
+  @apply bg-card rounded-xl border border-border/30 shadow-sm p-5 transition-all duration-300;
+}
+
+/* Button styles */
+.btn {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium
+         transition-colors focus-visible:outline-none focus-visible:ring-2 
+         focus-visible:ring-[hsl(var(--focus-ring))] focus-visible:ring-offset-2
+         disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+}
+
+.btn-outline {
+  @apply border border-border bg-background hover:bg-muted/50 text-foreground;
+}
+
+/* Fix scrollbars */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -837,230 +608,13 @@
     display: none;
   }
   
-  .scrollbar-thin {
-    scrollbar-width: thin;
+/* Fix glassmorphism effects */
+.glass {
+  @apply bg-background/80 backdrop-blur-md border border-border/50;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-left: 0 !important;
   }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-    height: 4px; /* For horizontal scrollbars */
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 9999px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  /* Custom overflow utilities */
-  .overflow-auto-if-needed {
-    overflow: auto;
-    overflow: overlay;
-  }
-  
-  /* Hide scrollbar when not needed */
-  @supports (-moz-appearance:none) {
-    .only-scroll-when-needed {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
-    }
-  }
-  
-  @supports not (-moz-appearance:none) {
-    .only-scroll-when-needed {
-      overflow-y: overlay;
-    }
-    
-    .only-scroll-when-needed::-webkit-scrollbar {
-      width: 4px;
-    }
-    
-    .only-scroll-when-needed::-webkit-scrollbar-thumb {
-      background-color: rgba(155, 155, 155, 0.5);
-      border-radius: 4px;
-    }
-    
-    .only-scroll-when-needed::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
-  }
-}
-
-/* Modern Gradients for Finance App */
-.gradient-primary {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/0.8) 100%);
-}
-
-.gradient-card-success {
-  background: linear-gradient(135deg, hsl(var(--accent-green)) 0%, hsl(var(--accent-green)/0.8) 100%);
-}
-
-.gradient-card-error {
-  background: linear-gradient(135deg, hsl(var(--accent-red)) 0%, hsl(var(--accent-red)/0.8) 100%);
-}
-
-.gradient-card-neutral {
-  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)/0.9) 100%);
-}
-
-.gradient-card-primary {
-  background: linear-gradient(135deg, hsl(var(--primary)/0.2) 0%, hsl(var(--primary)/0.05) 100%);
-}
-
-.gradient-card-dark {
-  background: linear-gradient(135deg, hsl(225 25% 12%) 0%, hsl(227 27% 10%) 100%);
-}
-
-.gradient-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.gradient-glow::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    hsla(var(--primary), 0.1) 0%,
-    transparent 60%
-  );
-  z-index: -1;
-}
-
-/* Chart Styles */
-.chart-container {
-  @apply relative p-4 w-full h-full;
-}
-
-.chart-card {
-  @apply finance-card-dark rounded-xl overflow-hidden;
-}
-
-.chart-header {
-  @apply flex items-center justify-between mb-4;
-}
-
-.chart-title {
-  @apply text-base font-medium;
-}
-
-.chart-legend {
-  @apply flex items-center gap-3;
-}
-
-.chart-legend-item {
-  @apply flex items-center gap-1.5 text-xs;
-}
-
-.chart-legend-icon {
-  @apply w-3 h-3 rounded-full;
-}
-
-/* Chart Colors */
-.chart-color-primary {
-  @apply bg-primary;
-}
-
-.chart-color-secondary {
-  @apply bg-secondary;
-}
-
-.chart-color-purple {
-  background-color: hsl(var(--chart-purple));
-}
-
-.chart-color-blue {
-  background-color: hsl(var(--chart-blue));
-}
-
-.chart-color-yellow {
-  background-color: hsl(var(--chart-yellow));
-}
-
-/* Trend lines and indicators */
-.trend-line {
-  @apply h-8 relative overflow-hidden;
-}
-
-.trend-line-mini {
-  @apply h-4 relative overflow-hidden;
-}
-
-.trend-line-success {
-  background: linear-gradient(to top right, transparent, hsl(var(--accent-green)/0.2));
-}
-
-.trend-line-error {
-  background: linear-gradient(to top right, transparent, hsl(var(--accent-red)/0.2));
-}
-
-.trend-line-neutral {
-  background: linear-gradient(to top right, transparent, hsl(var(--primary)/0.2));
-}
-
-/* Data visualization indicators */
-.data-indicator {
-  @apply inline-flex items-center gap-1 text-xs font-medium;
-}
-
-.data-indicator-success {
-  color: hsl(var(--accent-green));
-}
-
-.data-indicator-error {
-  color: hsl(var(--accent-red));
-}
-
-.data-indicator-neutral {
-  @apply text-muted-foreground;
-}
-
-.data-indicator-icon {
-  @apply h-3.5 w-3.5;
-}
-
-/* Activity heatmap (like example 9) */
-.activity-heatmap {
-  @apply grid grid-cols-7 gap-1;
-}
-
-.activity-day {
-  @apply rounded-sm w-full aspect-square;
-}
-
-.activity-level-0 {
-  @apply bg-card hover:bg-card/80;
-}
-
-.activity-level-1 {
-  @apply bg-primary/20 hover:bg-primary/30;
-}
-
-.activity-level-2 {
-  @apply bg-primary/40 hover:bg-primary/50;
-}
-
-.activity-level-3 {
-  @apply bg-primary/60 hover:bg-primary/70;
-}
-
-.activity-level-4 {
-  @apply bg-primary hover:bg-primary/90;
-}
-
-/* Fix other similar instances of opacity modifiers with gradient utilities */
-.motion.aside {
-  @apply bg-gradient-to-b from-background via-background to-background;
-}
-
+} 

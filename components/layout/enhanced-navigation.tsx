@@ -142,8 +142,8 @@ export function EnhancedNavigation({ className }: EnhancedNavigationProps) {
     <>
       <div
         className={cn(
-          "fixed top-0 z-40 w-full transition-all duration-300",
-          isScrolled ? "nav-header-connection" : "bg-transparent border-transparent",
+          "w-full transition-all duration-300 glass",
+          isScrolled ? "shadow-sm" : "bg-transparent border-transparent",
           className
         )}
       >

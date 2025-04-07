@@ -1,332 +1,384 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Plus, User, ArrowUpRight, Wallet, LineChart, DollarSign, BarChart2, TrendingUp, TrendingDown, CreditCard } from "lucide-react"
+import { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { 
+  PlusCircle, 
+  ArrowDownLeft, 
+  ArrowUpRight, 
+  Search, 
+  Home, 
+  Wallet, 
+  Send,
+  BarChart2,  
+  Eye, 
+  EyeOff,
+  Bell,
+  User,
+  CreditCard,
+  BarChart4,
+  TrendingUp,
+  TrendingDown,
+  LineChart
+} from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import AppLayout from "@/components/layout/app-layout"
-import { FinancialSummary } from "@/components/financial-summary"
-import NetWorthChart from "@/components/net-worth-chart"
-import AssetAllocation from "@/components/asset-allocation"
-import AccountsTable from "@/components/accounts-table"
-import ScenarioBuilder from "@/components/scenario-builder"
-import { PageLoading } from "@/components/ui/page-loading"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 export default function Dashboard() {
-  const [isLoading, setIsLoading] = useState(true)
-  const isMobile = useMediaQuery("(max-width: 767px)")
-
-  // Simulate data loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <PageLoading />
-      </AppLayout>
-    )
+  const [showBalance, setShowBalance] = useState(false)
+  const isDesktop = useMediaQuery("(min-width: 1024px)")
+  
+  // Mock user data
+  const user = {
+    name: "Alek",
+    avatar: "/assets/avatar.png", // Default fallback path
   }
+  
+  // Mock card data
+  const card = {
+    type: "Mastercard",
+    number: "5432 7512 3412 3456",
+    expiryDate: "09/25",
+    background: "bg-primary", // Neon green background
+  }
+  
+  // Mock transaction data
+  const transactions = [
+    {
+      id: 1,
+      name: "Esther Howard",
+      date: "Today at 8:30 AM",
+      amount: 320,
+      type: "incoming"
+    },
+    {
+      id: 2,
+      name: "Jane Cooper",
+      date: "Yesterday at 4:45 PM",
+      amount: 200,
+      type: "outgoing"
+    },
+    {
+      id: 3,
+      name: "Leslie Alexander",
+      date: "Yesterday at 2:15 PM",
+      amount: 450,
+      type: "incoming"
+    }
+  ]
 
-  return (
-    <AppLayout>
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Welcome back! Here's your financial overview</p>
+  // Financial summary data
+  const summaryData = [
+    {
+      title: "Total Balance",
+      value: "$24,156.00",
+      change: "+2.5%",
+      trend: "up",
+      icon: <Wallet className="h-4 w-4" />
+    },
+    {
+      title: "Monthly Income",
+      value: "$8,350.00",
+      change: "+12.3%",
+      trend: "up",
+      icon: <TrendingUp className="h-4 w-4" />
+    },
+    {
+      title: "Monthly Expenses",
+      value: "$4,752.00",
+      change: "+8.4%",
+      trend: "down",
+      icon: <TrendingDown className="h-4 w-4" />
+    },
+    {
+      title: "Savings",
+      value: "$6,245.00",
+      change: "+3.2%",
+      trend: "up",
+      icon: <CreditCard className="h-4 w-4" />
+    }
+  ]
+
+  // Renders mobile-specific dashboard design
+  const renderMobileView = () => (
+    <div className="max-w-md mx-auto pb-24">
+      {/* Header with greeting and user info */}
+      <div className="px-5 pt-6 pb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+            <span className="text-xs font-bold text-black">YB</span>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground">Hi, {user.name}</div>
+            <div className="text-sm font-bold">Welcome Back!</div>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="gap-2 rounded-full glass-button">
-            <User className="h-4 w-4" />
-            <span className="hidden sm:inline">Account</span>
-          </Button>
-          <Button
-            size="sm"
-            className="btn-finance-primary gap-2 rounded-full"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Add Funds</span>
-          </Button>
+        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full p-0">
+          <Search className="h-5 w-5" />
+        </Button>
+      </div>
+
+      {/* Card section */}
+      <div className="px-5 mb-6">
+        <div className={cn("neon-card rounded-xl p-4 text-black relative overflow-hidden")}>
+          <div className="flex flex-col h-full justify-between">
+            <div className="mb-6">
+              <span className="text-xs font-medium opacity-80">Mastercard</span>
+            </div>
+            <div className="space-y-4">
+              <div className="card-number">{card.number}</div>
+              <div className="flex justify-end">
+                <div className="h-8 w-8 rounded-full bg-black/20 backdrop-blur-sm"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Financial Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4">
-        <motion.div 
-          whileHover={{ y: -5 }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="finance-card-gradient p-4"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Total Balance</h3>
-            <div className="rounded-full p-2 bg-primary/10">
-              <Wallet className="h-4 w-4 text-primary" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-bold">$24,156.00</p>
-              <div className="flex items-center mt-1 text-xs balance-change-positive">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span>+2.5% from last month</span>
+      {/* Current Balance */}
+      <div className="px-5 mb-6">
+        <div className="neon-card-dark rounded-xl">
+          <h2 className="text-xl font-semibold mb-2">Current Balance</h2>
+          <div className="flex items-center gap-2 mb-1">
+            {showBalance ? (
+              <div className="text-2xl font-bold">$24,156.00</div>
+            ) : (
+              <div className="balance-hidden">
+                <div className="text-xl font-bold">●●●●●●</div>
               </div>
-            </div>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowBalance(!showBalance)}
+              className="p-0 h-8 w-8"
+            >
+              {showBalance ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
           </div>
-        </motion.div>
-
-        <motion.div 
-          whileHover={{ y: -5 }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="finance-card-gradient p-4"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Income</h3>
-            <div className="rounded-full p-2 bg-primary/10">
-              <TrendingUp className="h-4 w-4 text-primary" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-bold">$4,350.00</p>
-              <div className="flex items-center mt-1 text-xs balance-change-positive">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span>+12.3% from last month</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          whileHover={{ y: -5 }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="finance-card-gradient p-4"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Expenses</h3>
-            <div className="rounded-full p-2 bg-primary/10">
-              <TrendingDown className="h-4 w-4 text-primary" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-bold">$2,856.00</p>
-              <div className="flex items-center mt-1 text-xs balance-change-negative">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span>+8.4% from last month</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          whileHover={{ y: -5 }}
-          transition={{ type: "spring", stiffness: 500 }}
-          className="finance-card-gradient p-4"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Savings</h3>
-            <div className="rounded-full p-2 bg-primary/10">
-              <DollarSign className="h-4 w-4 text-primary" />
-            </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-2xl font-bold">$8,245.00</p>
-              <div className="flex items-center mt-1 text-xs balance-change-positive">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span>+5.2% from last month</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          <div className="text-sm text-muted-foreground">Tap to show balance.....</div>
+        </div>
       </div>
 
-      <div className="w-full">
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="mb-6 grid w-full max-w-md mx-auto grid-cols-4 rounded-full backdrop-blur-md border border-border/50 p-1">
-            <TabsTrigger value="overview" className="rounded-full">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="accounts" className="rounded-full">
-              Accounts
-            </TabsTrigger>
-            <TabsTrigger value="transactions" className="rounded-full">
-              Transactions
-            </TabsTrigger>
-            <TabsTrigger value="planning" className="rounded-full">
-              Planning
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="responsive-tabs-container">
-            <TabsContent value="overview" className="w-full space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="finance-card-dark"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-bold">Net Worth</h2>
-                    <Button variant="ghost" size="sm" className="h-8 gap-1 rounded-full btn-finance-icon text-primary">
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                  <NetWorthChart />
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="finance-card-dark"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-bold">Asset Allocation</h2>
-                    <Button variant="ghost" size="sm" className="h-8 gap-1 rounded-full btn-finance-icon text-primary">
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                  <AssetAllocation />
-                </motion.div>
-              </div>
-
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="finance-card-dark"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Recent Transactions</h2>
-                  <Button variant="ghost" size="sm" className="h-8 gap-1 rounded-full btn-finance-icon text-primary">
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-                
-                <div className="space-y-3">
-                  {/* Sample transactions - replace with actual component */}
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-avatar">
-                        <CreditCard className="h-4 w-4" />
-                      </div>
-                      <div className="transaction-content">
-                        <div className="transaction-title">Amazon</div>
-                        <div className="transaction-subtitle">Shopping</div>
-                      </div>
-                    </div>
-                    <div className="transaction-amount transaction-amount-negative">-$85.32</div>
-                  </div>
-                  
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-avatar">
-                        <Wallet className="h-4 w-4" />
-                      </div>
-                      <div className="transaction-content">
-                        <div className="transaction-title">Salary</div>
-                        <div className="transaction-subtitle">Direct Deposit</div>
-                      </div>
-                    </div>
-                    <div className="transaction-amount transaction-amount-positive">+$3,450.00</div>
-                  </div>
-                  
-                  <div className="transaction-item">
-                    <div className="transaction-info">
-                      <div className="transaction-avatar">
-                        <CreditCard className="h-4 w-4" />
-                      </div>
-                      <div className="transaction-content">
-                        <div className="transaction-title">Starbucks</div>
-                        <div className="transaction-subtitle">Food & Beverage</div>
-                      </div>
-                    </div>
-                    <div className="transaction-amount transaction-amount-negative">-$5.40</div>
-                  </div>
-                </div>
-                
-                <div className="mt-4 flex justify-center">
-                  <Button variant="outline" size="sm" className="rounded-full w-full btn-finance-outline gap-2">
-                    <span>View All Transactions</span>
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="accounts" className="w-full">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="finance-card-dark"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Accounts</h2>
-                  <Button variant="outline" size="sm" className="gap-1 rounded-full btn-finance-outline btn-finance-icon">
-                    <Plus className="h-3.5 w-3.5" />
-                    <span className="text-xs">Add Account</span>
-                  </Button>
-                </div>
-                <AccountsTable />
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="transactions" className="w-full">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="finance-card-dark"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Transaction History</h2>
-                  <Button variant="ghost" size="sm" className="h-8 gap-1 rounded-full btn-finance-icon text-primary">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-3.5 w-3.5"
-                    >
-                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                    </svg>
-                  </Button>
-                </div>
-                <p className="text-muted-foreground">Transaction history will appear here.</p>
-              </motion.div>
-            </TabsContent>
-
-            <TabsContent value="planning" className="w-full">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="finance-card-dark"
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Financial Planning</h2>
-                  <Button variant="outline" size="sm" className="gap-1 rounded-full btn-finance-outline btn-finance-icon">
-                    <Plus className="h-3.5 w-3.5" />
-                    <span className="text-xs">New Plan</span>
-                  </Button>
-                </div>
-                <ScenarioBuilder />
-              </motion.div>
-            </TabsContent>
+      {/* Quick actions */}
+      <div className="px-5 grid grid-cols-4 gap-3 mb-6">
+        <div className="action-button">
+          <div className="action-button-icon">
+            <ArrowDownLeft className="h-5 w-5" />
           </div>
-        </Tabs>
+          <span className="action-button-label">Transaction</span>
+        </div>
+        <div className="action-button">
+          <div className="action-button-icon">
+            <ArrowUpRight className="h-5 w-5" />
+          </div>
+          <span className="action-button-label">Conversion</span>
+        </div>
+        <div className="action-button">
+          <div className="action-button-icon">
+            <PlusCircle className="h-5 w-5" />
+          </div>
+          <span className="action-button-label">Top Up</span>
+        </div>
+        <div className="action-button">
+          <div className="action-button-icon">
+            <Send className="h-5 w-5" />
+          </div>
+          <span className="action-button-label">Payments</span>
+        </div>
       </div>
-    </AppLayout>
+
+      {/* Recent Transactions */}
+      <div className="px-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xl font-semibold">Transactions</h2>
+          <Button variant="ghost" size="sm" className="text-xs text-primary h-8">
+            Weekly
+          </Button>
+        </div>
+
+        <div className="space-y-1">
+          {transactions.map((transaction) => (
+            <div key={transaction.id} className="transaction-item">
+              <div className="flex items-center">
+                <Avatar className="h-10 w-10 border border-white/10">
+                  <AvatarFallback>{transaction.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="transaction-content">
+                  <div className="text-sm font-medium">{transaction.name}</div>
+                  <div className="text-xs text-muted-foreground">{transaction.date}</div>
+                </div>
+              </div>
+              <div className={cn(
+                "transaction-amount",
+                transaction.type === "incoming" 
+                  ? "transaction-amount-positive" 
+                  : "transaction-amount-negative"
+              )}>
+                {transaction.type === "incoming" ? "+" : "-"}${transaction.amount}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   )
+  
+  // Renders desktop-specific dashboard design
+  const renderDesktopView = () => (
+    <div className="px-8 py-6">
+      {/* Desktop Header Bar */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">Financial Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {user.name}! Here's your financial overview.</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" className="rounded-full">
+            <Bell className="h-5 w-5" />
+          </Button>
+          <Button variant="outline" size="icon" className="rounded-full">
+            <User className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+      
+      {/* Financial Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {summaryData.map((item, index) => (
+          <Card key={index} className="bg-card">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{item.title}</CardTitle>
+              <div className="rounded-full p-2 bg-primary/10">
+                {item.icon}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{item.value}</div>
+              <div className={cn(
+                "flex items-center mt-1 text-xs",
+                item.trend === "up" ? "text-primary" : "text-destructive"
+              )}>
+                {item.trend === "up" ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                <span>{item.change} from last month</span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      {/* Main Dashboard Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left column */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Balance History</CardTitle>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">Week</Button>
+                <Button variant="outline" size="sm">Month</Button>
+                <Button variant="default" size="sm">Year</Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px] flex items-center justify-center bg-secondary/20 rounded-lg">
+                <LineChart className="h-10 w-10 text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Chart visualization would go here</span>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Recent Transactions</CardTitle>
+              <Button variant="outline" size="sm">View All</Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-0">
+                {transactions.map((transaction) => (
+                  <div key={transaction.id} className="transaction-item">
+                    <div className="flex items-center">
+                      <Avatar className="h-10 w-10 border border-white/10">
+                        <AvatarFallback>{transaction.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="transaction-content">
+                        <div className="text-sm font-medium">{transaction.name}</div>
+                        <div className="text-xs text-muted-foreground">{transaction.date}</div>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "transaction-amount",
+                      transaction.type === "incoming" 
+                        ? "transaction-amount-positive" 
+                        : "transaction-amount-negative"
+                    )}>
+                      {transaction.type === "incoming" ? "+" : "-"}${transaction.amount}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Right column */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Cards</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className={cn("neon-card rounded-xl p-4 text-black relative overflow-hidden mb-4")}>
+                <div className="flex flex-col h-full justify-between">
+                  <div className="mb-6">
+                    <span className="text-xs font-medium opacity-80">Mastercard</span>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="card-number">{card.number}</div>
+                    <div className="flex justify-end">
+                      <div className="h-8 w-8 rounded-full bg-black/20 backdrop-blur-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Button className="w-full mt-2" variant="outline">Add New Card</Button>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Spending Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[200px] flex items-center justify-center bg-secondary/20 rounded-lg">
+                <BarChart2 className="h-10 w-10 text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Analytics chart would go here</span>
+              </div>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Shopping</span>
+                  <span className="text-sm font-medium">$845.32</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Food & Dining</span>
+                  <span className="text-sm font-medium">$548.20</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Transportation</span>
+                  <span className="text-sm font-medium">$312.00</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+
+  return isDesktop ? renderDesktopView() : renderMobileView()
 }
 

@@ -37,6 +37,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useTheme } from "next-themes"
 
 interface NavItemProps {
   name: string
@@ -53,6 +54,7 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
   const { isCollapsed, toggleSidebar } = useSidebar()
   const pathname = usePathname()
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({})
+  const { theme } = useTheme()
 
   // Framer Motion variants
   const sidebarVariants = {
@@ -199,7 +201,7 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
                       <span className="relative flex h-6 w-6 items-center justify-center rounded-md">
                         {item.icon}
                         <motion.div 
-                          className="absolute inset-0 rounded-md bg-primary/20 -z-10 ring-1 ring-white/10"
+                          className="absolute inset-0 rounded-md bg-primary/20 -z-10 ring-1 ring-primary/10"
                           layoutId={`sidebar-highlight-${sectionIndex}`}
                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
@@ -222,7 +224,7 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
                     transition={{ duration: 0.2 }}
                     className="ml-1"
                   >
-                    <ChevronDown className="h-4 w-4 text-white/50" />
+                    <ChevronDown className="h-4 w-4" />
                   </motion.div>
                 )}
                 
@@ -242,10 +244,10 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
               </button>
             </TooltipTrigger>
             {isCollapsed && (
-              <TooltipContent side="right" className="bg-primary/90 text-white border-primary/40 rounded-lg shadow-xl shadow-black/20">
+              <TooltipContent side="right" className="bg-primary/90 text-primary-foreground border-primary/40 rounded-lg shadow-xl">
                 {item.name}
                 {hasChildren && (
-                  <div className="mt-1 text-xs text-white/70">Has submenu</div>
+                  <div className="mt-1 text-xs opacity-70">Has submenu</div>
                 )}
               </TooltipContent>
             )}
@@ -365,18 +367,18 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
       </div>
       
       {/* Version Display and Server Info */}
-      <div className="p-3 border-t border-white/5 bg-white/3 backdrop-blur-lg" suppressHydrationWarning>
+      <div className="sidebar-bottom-bar" suppressHydrationWarning>
         {isCollapsed ? (
           <TooltipProvider disableHoverableContent>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  className="w-full flex justify-center py-2 text-xs text-white/60 hover:text-white transition-all duration-200 rounded-lg hover:bg-white/5"
+                  className="w-full flex justify-center py-2 text-xs rounded-lg hover:bg-foreground/5 transition-all duration-200"
                 >
                   <Globe className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="right" align="center" className="bg-primary/90 text-white border-primary/40 flex flex-col gap-1 rounded-lg shadow-xl shadow-black/20">
+              <TooltipContent side="right" align="center" className="bg-primary/90 text-primary-foreground border-primary/40 flex flex-col gap-1 rounded-lg shadow-xl">
                 <div className="font-semibold text-xs">{currentEnv.name}</div>
                 <div className="text-xs">v{currentEnv.version}</div>
               </TooltipContent>
@@ -385,30 +387,30 @@ export function CollapsibleSidebar({ className }: CollapsibleSidebarProps) {
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200 border border-white/10 backdrop-blur">
+              <button className="version-dropdown-trigger">
                 <div className="flex items-center gap-2" suppressHydrationWarning>
                   <Globe className="h-4 w-4 text-primary" />
-                  <span className="font-medium text-white">v{currentEnv.version}</span>
+                  <span className="font-medium">v{currentEnv.version}</span>
                 </div>
-                <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4 bg-primary/20 text-white border-white/10">
+                <Badge variant="outline" className="text-[10px] py-0 px-1.5 h-4 bg-primary/20 text-primary border-primary/10">
                   {currentEnv.name}
                 </Badge>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8} className="w-56 bg-black/90 backdrop-blur-xl border border-white/10 text-white rounded-lg shadow-2xl">
-              <div className="px-2 py-1.5 text-xs text-white/50 border-b border-white/10 mb-1">
+            <DropdownMenuContent className="version-dropdown-content" align="end" sideOffset={8}>
+              <div className="px-2 py-1.5 text-xs text-muted-foreground border-b border-border/20 mb-1">
                 Environment
               </div>
               {environments.map((env) => (
-                <DropdownMenuItem key={env.name} className="focus:bg-white/10 rounded-md px-2 py-1.5 cursor-pointer">
+                <DropdownMenuItem key={env.name} className="focus:bg-foreground/5 rounded-md px-2 py-1.5 cursor-pointer">
                   <div className="flex flex-col w-full" suppressHydrationWarning>
                     <div className="flex w-full items-center justify-between">
                       <span className="font-semibold text-sm">{env.name}</span>
-                      <Badge variant="secondary" className="text-[10px] py-0 h-4 bg-primary/20 text-white border-white/10">
+                      <Badge variant="outline" className="text-[10px] py-0 h-4 bg-primary/20 text-primary border-primary/10">
                         v{env.version}
                       </Badge>
                     </div>
-                    <span className="text-xs text-white/50 mt-0.5">{env.description}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{env.description}</span>
                   </div>
                 </DropdownMenuItem>
               ))}
