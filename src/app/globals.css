@@ -1,0 +1,460 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Core theme colors */
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #50E3C2;
+  --primary-foreground: #000000;
+  --muted: #0A0A0A;
+  --muted-foreground: #666666;
+  --card-bg: rgba(10, 10, 10, 0.3);
+  --card-border: rgba(80, 227, 194, 0.1);
+  
+  /* Accent colors */
+  --secondary: #0070f3;
+  --accent-lime: #CCFF00;
+  --accent-lime-glow: rgba(204, 255, 0, 0.25);
+  --accent-blue: #0070f3; 
+  --accent-violet: #8557e6;
+  
+  /* Status colors */
+  --success: #10b981;
+  --warning: #fbbf24;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --inner-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+
+  /* Mobile-first responsive styles */
+  --sidebar-width-collapsed: 80px;
+  --sidebar-width-expanded: 256px;
+}
+
+/* Light mode overrides */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #ffffff;
+    --foreground: #1a1a1a;
+    --card-bg: #f5f5f5;
+    --card-border: #e0e0e0;
+    --muted: #f0f0f0;
+    --muted-foreground: #555555;
+    --primary-glow: rgba(80, 227, 194, 0.2);
+    --secondary-glow: rgba(0, 112, 243, 0.2);
+    --accent-lime-glow: rgba(204, 255, 0, 0.2);
+    --inner-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+@layer base {
+  html, body {
+    @apply bg-[var(--background)] text-[var(--foreground)];
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  /* Ensure content is visible on all devices */
+  main {
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    height: 100%;
+    width: 100%;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+  
+  /* Mobile scrolling fix */
+  @media (max-width: 767px) {
+    html, body {
+      height: auto;
+      min-height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+    
+    body {
+      position: relative;
+    }
+    
+    #__next, .min-h-screen {
+      min-height: 100vh;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl backdrop-blur-xl;
+    background-color: rgba(10, 10, 10, 0.3); /* Override to match theme */
+  }
+
+  .glass-button {
+    @apply bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-white rounded-2xl transition-all duration-300 hover:shadow-lg;
+  }
+
+  .glass-input {
+    @apply bg-[var(--muted)] border border-[var(--card-border)] rounded-2xl px-4 py-2 text-white focus:outline-none focus:border focus:border-[#50E3C280];
+  }
+
+  .nav-link {
+    @apply flex items-center p-3 rounded-2xl transition-all duration-300 text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:bg-opacity-20 hover:text-white;
+  }
+
+  .nav-link.active {
+    @apply bg-[var(--muted)] bg-opacity-30 text-white shadow-lg shadow-[#50E3C280];
+  }
+
+  /* Responsive card styling */
+  .card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .metric-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .settings-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .profile-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .activity-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .asset-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .chart-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+
+  .performance-card {
+    @apply glass-card p-4 sm:p-6 rounded-2xl w-full break-words;
+    overflow: visible;
+  }
+  
+  .grid-background {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 12px 12px;
+  }
+  
+  .lime-btn {
+    @apply bg-gradient-to-r from-[#CCFF00] to-[#A3FF12] text-black font-medium relative overflow-hidden transition-all duration-300;
+  }
+  
+  .lime-btn:hover {
+    @apply -translate-y-1;
+  }
+  
+  /* Gradient text styling */
+  .text-gradient-primary {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#50E3C2] to-[#00FFC8];
+  }
+  
+  .text-gradient-secondary {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#0070f3] to-[#66A3FF];
+  }
+  
+  .text-gradient-lime {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#CCFF00] to-[#A3FF12];
+  }
+  
+  /* Glowing effects */
+  .glow-text {
+    text-shadow: 0 0 10px var(--primary-glow);
+  }
+  
+  .glow-lime-text {
+    text-shadow: 0 0 10px var(--accent-lime-glow);
+  }
+  
+  .glow-box {
+    box-shadow: 0 0 15px var(--primary-glow);
+  }
+  
+  /* Navigation styling */
+  .nav-link:hover {
+    @apply bg-[var(--muted)];
+  }
+  
+  /* Animated gradient */
+  .animated-gradient {
+    background: linear-gradient(
+      -45deg,
+      var(--primary),
+      var(--accent-blue),
+      var(--accent-violet),
+      var(--accent-lime)
+    );
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* Glass effect */
+  .glass {
+    @apply bg-opacity-10 backdrop-blur-md border border-opacity-20 shadow-lg;
+  }
+  
+  /* Main content transitions to accommodate sidebar */
+  .main-content {
+    transition: margin-left 0.3s ease-in-out;
+  }
+  
+  /* Tooltip */
+  .tooltip {
+    @apply relative inline-block;
+  }
+  
+  .tooltip .tooltip-content {
+    @apply invisible absolute z-10 bg-[var(--card-bg)] text-[var(--foreground)] rounded p-2 text-xs w-max;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    transform: translateY(5px);
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+  }
+  
+  .tooltip:hover .tooltip-content {
+    @apply visible opacity-100;
+    transform: translateY(0);
+  }
+  
+  /* Custom scrollbar styling - only show when needed */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: block;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(10, 10, 10, 0.1);
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(80, 227, 194, 0.3);
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(80, 227, 194, 0.5);
+    cursor: pointer;
+  }
+  
+  /* Mobile and tablet styles */
+  .sidebar-collapsed {
+    width: 64px;
+  }
+  
+  .sidebar-expanded {
+    width: 260px;
+  }
+  
+  /* Responsive layout shifts for sidebar */
+  @media (min-width: 768px) {
+    .main-content-with-sidebar-expanded {
+      margin-left: 260px;
+    }
+    
+    .main-content-with-sidebar-collapsed {
+      margin-left: 64px;
+    }
+  }
+  
+  /* Animation keyframes */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInRight {
+    from { transform: translateX(-10px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideInUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-in-out;
+  }
+  
+  .animate-slide-in-up {
+    animation: slideInUp 0.3s ease-in-out;
+  }
+  
+  /* Mobile menu overlay */
+  .mobile-menu-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+  
+  .mobile-menu {
+    @apply fixed top-0 left-0 h-full bg-[var(--background)] z-50 shadow-lg;
+    animation: slideInRight 0.3s ease-in-out;
+  }
+
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(45deg, var(--primary), transparent);
+    padding: 1px;
+    border-radius: 1rem;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent, var(--primary));
+    border-radius: inherit;
+    z-index: -1;
+  }
+}
+
+@layer utilities {
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .glowing {
+    animation: glow 2s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(80, 227, 194, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(80, 227, 194, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(80, 227, 194, 0.2);
+  }
+}
+
+/* Responsive mobile fixes */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  svg {
+    max-width: 100%;
+    height: auto !important;
+  }
+  
+  .min-h-screen {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .overflow-hidden {
+    overflow: visible !important;
+    overflow-x: hidden !important;
+  }
+  
+  .card, .metric-card, .activity-card, .settings-card, 
+  .profile-card, .asset-card, .chart-card {
+    overflow: visible !important;
+  }
+  
+  main {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  body, main, section, div {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: auto; /* Firefox */
+  }
+  
+  /* Only show horizontal scrollbars where absolutely needed */
+  .overflow-x-auto {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Control overflow only where needed */
+.overflow-control {
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+/* Force hide scrollbars where they're not needed */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Only allow x-scrolling in specifically marked containers */
+.x-scrollable {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
