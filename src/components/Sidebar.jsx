@@ -351,7 +351,13 @@ export default function Sidebar() {
   }, []);
   
   const toggleCollapse = () => {
-    setCollapsed(!collapsed);
+    const newState = !collapsed;
+    setCollapsed(newState);
+    
+    // Dispatch an event with the new collapsed state
+    window.dispatchEvent(new CustomEvent('sidebar-collapsed-state-changed', { 
+      detail: { isCollapsed: newState } 
+    }));
   };
   
   // Sidebar content shared across mobile and desktop
@@ -360,11 +366,11 @@ export default function Sidebar() {
     
     return (
       <div 
-        className={`${isInMobileView ? 'h-screen' : 'h-[calc(100vh-2rem)]'} ${sidebarWidth} transition-all duration-300 ease-in-out bg-[#0A0A0A]/60 sidebar-glass ${isInMobileView ? '' : 'fixed top-4 left-4 bottom-4'} floating-sidebar rounded-2xl border border-[#222]/60 relative flex flex-col neo-shadow overflow-hidden`}
+        className={`${isInMobileView ? 'h-screen' : 'h-[calc(100vh-2rem)]'} ${sidebarWidth} transition-all duration-300 ease-in-out bg-[#0A0A0A]/60 sidebar-glass ${isInMobileView ? '' : 'fixed top-4 left-4 bottom-4 z-30'} floating-sidebar rounded-2xl border border-[#222]/60 flex flex-col neo-shadow overflow-hidden`}
       >
         {/* Logo */}
         <div className={`py-6 ${collapsed && !isInMobileView ? 'px-4' : 'px-6'} flex items-center`}>
-            {(!collapsed || isInMobileView) ? (
+          {(!collapsed || isInMobileView) ? (
             <div className="flex items-center">
               <div 
                 onClick={!isInMobileView ? toggleCollapse : undefined}
@@ -384,8 +390,8 @@ export default function Sidebar() {
                 <h1 className="text-xl font-bold text-white">YSep<span className="text-[#50E3C2]">BB</span></h1>
                 <p className="text-xs text-gray-400">Balance Beam</p>
               </div>
-              </div>
-            ) : (
+            </div>
+          ) : (
             <div className="mx-auto">
               <div 
                 onClick={toggleCollapse}
@@ -399,28 +405,28 @@ export default function Sidebar() {
                   </span>
                 </span>
               </div>
-              </div>
-            )}
-          </div>
-          
-        {/* Search */}
-          {(!collapsed || isInMobileView) && (
-          <div className="px-6 mb-6">
-            <div className="relative group">
-                <input 
-                  type="text" 
-                  placeholder="Search..." 
-                  className="w-full bg-[#111]/50 backdrop-blur-md border border-[#222]/60 focus:border-[#50E3C2]/60 rounded-xl py-2.5 pl-4 pr-10 text-sm focus:outline-none transition-all duration-200 text-gray-300 placeholder-gray-500"
-                />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 group-hover:text-[#50E3C2] transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
             </div>
           )}
-          
+        </div>
+        
+        {/* Search */}
+        {(!collapsed || isInMobileView) && (
+          <div className="px-6 mb-6">
+            <div className="relative group">
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                className="w-full bg-[#111]/50 backdrop-blur-md border border-[#222]/60 focus:border-[#50E3C2]/60 rounded-xl py-2.5 pl-4 pr-10 text-sm focus:outline-none transition-all duration-200 text-gray-300 placeholder-gray-500"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 group-hover:text-[#50E3C2] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Main navigation */}
         <div 
           className="flex-grow overflow-y-auto hide-scrollbar px-3"
@@ -463,7 +469,7 @@ export default function Sidebar() {
                     ${!collapsed || isInMobileView ? 'mr-3' : ''}
                     transition-colors duration-150
                   `}>
-                  {item.icon}
+                    {item.icon}
                   </div>
                   
                   {(!collapsed || isInMobileView) && (
@@ -536,7 +542,7 @@ export default function Sidebar() {
           </div>
           
           {/* Favorites section */}
-            {(!collapsed || isInMobileView) && (
+          {(!collapsed || isInMobileView) && (
             <>
               <div className="sidebar-divider my-4 mx-3"></div>
               
@@ -566,11 +572,11 @@ export default function Sidebar() {
                   key={item.id}
                   className="w-10 h-10 rounded-xl hover:bg-[#131313]/70 flex items-center justify-center transition-colors duration-150 cursor-pointer hover-scale"
                 >
-                      {item.icon}
-                  </div>
-                ))}
-              </div>
-            )}
+                  {item.icon}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Server status footer */}
@@ -581,7 +587,7 @@ export default function Sidebar() {
         `}>
           {(!collapsed || isInMobileView) ? (
             <div className="flex items-center justify-between">
-            <div className="flex items-center">
+              <div className="flex items-center">
                 <div className={`
                   h-8 w-8 rounded-xl mr-3 flex items-center justify-center
                   ${serverOnline ? 'bg-[#50E3C2]/10' : 'bg-red-500/10'}
@@ -645,7 +651,7 @@ export default function Sidebar() {
               <FaServer size={14} className={serverOnline ? 'text-[#50E3C2]' : 'text-red-500'} />
             </div>
           )}
-          </div>
+        </div>
       </div>
     );
   };

@@ -458,3 +458,50 @@
   overflow-x: auto;
   overflow-y: hidden;
 }
+
+/* Add these scrolling rules at the end of the file */
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Add improved scrolling behavior for the main content */
+main {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  height: calc(100vh - 4rem);
+  position: relative;
+}
+
+/* Add fixed sidebar styles */
+.fixed-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 40;
+  will-change: transform;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-glass {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), 
+              0 1px 3px rgba(0, 0, 0, 0.1), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.03);
+}
+
+.neo-shadow {
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), 
+              0 1px 3px rgba(0, 0, 0, 0.1);
+}
