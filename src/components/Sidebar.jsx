@@ -38,6 +38,77 @@ export default function Sidebar() {
   const sidebarRef = useRef(null);
   const submenuTimerRef = useRef(null);
   
+  // Detect current route and set active menu
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      
+      // Find the matching menu and submenu from the current path
+      for (const menu of menuItems) {
+        // Check if path is in this menu's route
+        if (menu.path && pathname === menu.path) {
+          setActiveMenu(menu.id);
+          break;
+        }
+        
+        // Check subItems
+        if (menu.subItems && menu.subItems.length > 0) {
+          const matchingSubItem = menu.subItems.find(subItem => 
+            subItem.path && pathname.includes(subItem.path)
+          );
+          
+          if (matchingSubItem) {
+            setActiveMenu(menu.id);
+            setOpenSubmenu(menu.id);
+            break;
+          }
+        }
+      }
+    }
+  }, []);
+  
+  // Add a useEffect to update activeMenu when URL changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const pathname = window.location.pathname;
+      
+      // Find the matching menu and submenu from the current path
+      let found = false;
+      for (const menu of menuItems) {
+        // Check if path is in this menu's route
+        if (menu.path && pathname === menu.path) {
+          setActiveMenu(menu.id);
+          found = true;
+          break;
+        }
+        
+        // Check subItems
+        if (menu.subItems && menu.subItems.length > 0) {
+          const matchingSubItem = menu.subItems.find(subItem => 
+            subItem.path && pathname.includes(subItem.path)
+          );
+          
+          if (matchingSubItem) {
+            setActiveMenu(menu.id);
+            setOpenSubmenu(menu.id);
+            found = true;
+            break;
+          }
+        }
+      }
+    };
+    
+    // Initial call
+    handleRouteChange();
+    
+    // Add event listener for popstate
+    window.addEventListener('popstate', handleRouteChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, []);
+  
   // Handle window resize for responsive behavior
   useEffect(() => {
     const handleResize = () => {
@@ -237,8 +308,22 @@ export default function Sidebar() {
     setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
   };
   
-  const handleMenuClick = (id) => {
+  const handleMenuClick = (id, subItemId = null) => {
     setActiveMenu(id);
+    
+    // Find the menu item by id
+    const menuItem = menuItems.find(item => item.id === id);
+    
+    // If the menu has subitems, open the submenu
+    if (menuItem && menuItem.subItems && menuItem.subItems.length > 0) {
+      setOpenSubmenu(id);
+      
+      // If a specific subitem was clicked, we could track that too
+      if (subItemId) {
+        // Here you could set an active subitem state if needed
+        console.log('Submenu item clicked:', subItemId);
+      }
+    }
   };
   
   // Function to handle navigation
@@ -450,7 +535,9 @@ export default function Sidebar() {
                   className={`
                     relative flex items-center ${!collapsed || isInMobileView ? 'pl-3 pr-3 py-2.5' : 'justify-center py-3'} 
                     rounded-xl menu-item-hover cursor-pointer group
-                    ${activeMenu === item.id ? 'active-menu text-white bg-[#131313]' : 'text-gray-400'}
+                    ${activeMenu === item.id || (typeof window !== 'undefined' && item.subItems.some(subItem => window.location.pathname.includes(subItem.path))) 
+                      ? 'active-menu text-white bg-[#131313]' 
+                      : 'text-gray-400'}
                   `}
                   onClick={() => {
                     handleMenuClick(item.id);
@@ -465,7 +552,9 @@ export default function Sidebar() {
                   <div className="active-indicator"></div>
                   
                   <div className={`
-                    ${activeMenu === item.id ? 'text-[#50E3C2]' : 'text-gray-400 group-hover:text-white'} 
+                    ${activeMenu === item.id || (typeof window !== 'undefined' && item.subItems.some(subItem => window.location.pathname.includes(subItem.path))) 
+                      ? 'text-[#50E3C2]' 
+                      : 'text-gray-400 group-hover:text-white'} 
                     ${!collapsed || isInMobileView ? 'mr-3' : ''}
                     transition-colors duration-150
                   `}>
@@ -495,15 +584,26 @@ export default function Sidebar() {
                     {item.subItems.map((subItem) => (
                       <div 
                         key={subItem.id}
-                        className="flex items-center px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#131313] cursor-pointer transition-all duration-150"
+                        className={`flex items-center px-3 py-2 rounded-lg text-sm hover:bg-[#131313] cursor-pointer transition-all duration-150 ${
+                          window.location.pathname.includes(subItem.path) 
+                            ? 'text-white bg-[#131313]/70' 
+                            : 'text-gray-400 hover:text-white'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent parent menu item click
+                          handleMenuClick(item.id, subItem.id);
                           if (subItem.path) {
                             handleNavigation(subItem.path);
                           }
                         }}
                       >
-                        <div className="mr-2.5 text-gray-500">{subItem.icon}</div>
+                        <div className={`mr-2.5 ${
+                          window.location.pathname.includes(subItem.path)
+                            ? 'text-[#50E3C2]'
+                            : 'text-gray-500'
+                        }`}>
+                          {subItem.icon}
+                        </div>
                         <span>{subItem.label}</span>
                       </div>
                     ))}
@@ -522,15 +622,26 @@ export default function Sidebar() {
                       {item.subItems.map((subItem) => (
                         <div 
                           key={subItem.id}
-                          className="flex items-center px-2 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#131313]/70 cursor-pointer transition-all duration-150"
+                          className={`flex items-center px-2 py-2 rounded-lg text-sm hover:bg-[#131313]/70 cursor-pointer transition-all duration-150 ${
+                            window.location.pathname.includes(subItem.path) 
+                              ? 'text-white bg-[#131313]/40' 
+                              : 'text-gray-400 hover:text-white'
+                          }`}
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent parent menu item click
+                            handleMenuClick(item.id, subItem.id);
                             if (subItem.path) {
                               handleNavigation(subItem.path);
                             }
                           }}
                         >
-                          <div className="mr-2.5 text-gray-500">{subItem.icon}</div>
+                          <div className={`mr-2.5 ${
+                            window.location.pathname.includes(subItem.path)
+                              ? 'text-[#50E3C2]'
+                              : 'text-gray-500'
+                          }`}>
+                            {subItem.icon}
+                          </div>
                           <span>{subItem.label}</span>
                         </div>
                       ))}

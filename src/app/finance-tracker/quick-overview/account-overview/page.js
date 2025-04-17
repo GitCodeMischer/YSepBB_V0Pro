@@ -1,20 +1,20 @@
 'use client';
 
 import React from 'react';
-import { FaUniversity, FaCreditCard, FaPiggyBank, FaWallet, FaPlus, FaChartLine, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaUniversity, FaCreditCard, FaPiggyBank, FaWallet, FaPlus, FaSortAmountUp, FaSortAmountDown } from 'react-icons/fa';
 import Layout from '@/components/Layout';
 import PageContainer from '@/components/PageContainer';
 import ChartCard from '@/components/dashboard/ChartCard';
 import DataTable from '@/components/dashboard/DataTable';
 import StatCard from '@/components/dashboard/StatCard';
 
-export default function AccountBalancesPage() {
+export default function AccountOverviewPage() {
   // Mock data for accounts
   const accountColumns = [
     { header: 'Account', accessor: 'account' },
-    { header: 'Current Balance', accessor: 'balance' },
-    { header: 'Previous Balance', accessor: 'previousBalance' },
-    { header: 'Change', accessor: 'change' },
+    { header: 'Type', accessor: 'type' },
+    { header: 'Balance', accessor: 'balance' },
+    { header: 'Available', accessor: 'available' },
     { header: 'Last Updated', accessor: 'lastUpdated' }
   ];
   
@@ -28,9 +28,9 @@ export default function AccountBalancesPage() {
           <span>Main Checking</span>
         </div>
       ), 
+      type: 'Checking',
       balance: '$2,450.75', 
-      previousBalance: '$2,100.25',
-      change: '+$350.50 (16.7%)',
+      available: '$2,400.75',
       lastUpdated: '2 hours ago'
     },
     { 
@@ -42,9 +42,9 @@ export default function AccountBalancesPage() {
           <span>Emergency Fund</span>
         </div>
       ), 
+      type: 'Savings',
       balance: '$10,200.00', 
-      previousBalance: '$9,700.00',
-      change: '+$500.00 (5.2%)',
+      available: '$10,200.00',
       lastUpdated: '1 day ago'
     },
     { 
@@ -56,9 +56,9 @@ export default function AccountBalancesPage() {
           <span>Vacation Fund</span>
         </div>
       ), 
+      type: 'Savings',
       balance: '$3,647.82', 
-      previousBalance: '$3,447.82',
-      change: '+$200.00 (5.8%)',
+      available: '$3,647.82',
       lastUpdated: '1 day ago'
     },
     { 
@@ -70,9 +70,9 @@ export default function AccountBalancesPage() {
           <span>Travel Credit Card</span>
         </div>
       ), 
+      type: 'Credit Card',
       balance: '-$750.45', 
-      previousBalance: '-$550.25',
-      change: '-$200.20 (36.4%)',
+      available: '$9,249.55',
       lastUpdated: '3 hours ago'
     },
     { 
@@ -84,9 +84,9 @@ export default function AccountBalancesPage() {
           <span>Rewards Credit Card</span>
         </div>
       ), 
+      type: 'Credit Card',
       balance: '-$1,423.66', 
-      previousBalance: '-$1,623.85',
-      change: '+$200.19 (12.3%)',
+      available: '$3,576.34',
       lastUpdated: '1 hour ago'
     }
   ];
@@ -94,45 +94,63 @@ export default function AccountBalancesPage() {
   return (
     <Layout>
       <PageContainer 
-        title="Account Balances" 
-        subtitle="Monitor your account balances and changes over time"
-        icon={<FaWallet size={20} />}
+        title="Account Overview" 
+        subtitle="Monitor all your linked financial accounts"
+        icon={<FaUniversity size={20} />}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            title="Total Cash"
+            title="Total Assets"
             value="$16,298.57"
-            icon={<FaWallet size={16} />}
-            trend="up"
-            trendValue="$1,050.50"
+            trend="+$845.22"
+            trendDirection="up"
+            icon={<FaWallet />}
+            color="blue"
           />
           <StatCard
             title="Total Debt"
             value="$2,174.11"
-            icon={<FaCreditCard size={16} />}
-            trend="up"
-            trendValue="$0.01"
+            trend="-$156.33"
+            trendDirection="down"
+            icon={<FaCreditCard />}
+            color="red"
           />
           <StatCard
             title="Net Worth"
             value="$14,124.46"
-            icon={<FaChartLine size={16} />}
-            trend="up"
-            trendValue="$1,050.49"
+            trend="+$1,001.55"
+            trendDirection="up"
+            icon={<FaPiggyBank />}
+            color="green"
           />
           <StatCard
-            title="Monthly Change"
-            value="+7.4%"
-            icon={<FaChartLine size={16} />}
-            trend="up"
-            trendValue="2.1%"
+            title="Account Count"
+            value="5"
+            trend="+1"
+            trendDirection="up"
+            icon={<FaUniversity />}
+            color="purple"
           />
         </div>
         
-        <div className="grid grid-cols-1 mb-8">
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-medium text-white">Your Accounts</h2>
+            <div className="flex space-x-2">
+              <button className="bg-[#1F1F1F] hover:bg-[#2A2A2A] text-white px-4 py-2 rounded-lg text-sm flex items-center">
+                <FaPlus className="mr-2" size={14} />
+                Add Account
+              </button>
+              <button className="bg-[#1F1F1F] hover:bg-[#2A2A2A] text-white px-4 py-2 rounded-lg text-sm flex items-center">
+                <FaSortAmountUp className="mr-2" size={14} />
+                Sort
+              </button>
+            </div>
+          </div>
+          
           <DataTable
-            title="Account Balance Details"
-            subtitle="Current balances and recent changes"
+            title="All Accounts"
+            subtitle="Complete view of your linked accounts"
             columns={accountColumns}
             data={accountData}
             showActionButtons={true}
@@ -141,13 +159,13 @@ export default function AccountBalancesPage() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ChartCard 
-            title="Balance History"
-            subtitle="Last 6 months"
+            title="Account Balances"
+            subtitle="6 month trend"
             height="h-80"
           />
           <ChartCard 
-            title="Balance Distribution"
-            subtitle="By account type"
+            title="Assets vs. Debt"
+            subtitle="Breakdown of your financial position"
             height="h-80"
           />
         </div>
