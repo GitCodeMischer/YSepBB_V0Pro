@@ -98,8 +98,11 @@ export default function Sidebar() {
       }
       
       .sidebar-glass {
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), 
+                    0 1px 3px rgba(0, 0, 0, 0.1), 
+                    inset 0 1px 1px rgba(255, 255, 255, 0.03);
       }
       
       .menu-item-hover {
@@ -141,8 +144,8 @@ export default function Sidebar() {
       }
       
       .neo-shadow {
-        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
-                    -5px -5px 15px rgba(255, 255, 255, 0.03);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), 
+                    0 1px 3px rgba(0, 0, 0, 0.1);
       }
       
       .submenu-animation {
@@ -168,13 +171,36 @@ export default function Sidebar() {
         transform: scale(1.05);
       }
       
-      .sidebar-toggle-btn {
+      .clickable-logo {
+        position: relative;
         transition: all 0.3s ease;
-        transform: translateX(0);
+        overflow: hidden;
       }
       
-      .sidebar-toggle-btn:hover {
-        transform: translateX(2px);
+      .clickable-logo::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+      }
+      
+      .clickable-logo:hover::before {
+        transform: translateX(100%);
+      }
+      
+      .clickable-logo:active {
+        transform: scale(0.95);
+      }
+
+      @media (max-width: 767px) {
+        .floating-sidebar {
+          left: 0.75rem !important;
+          bottom: 0.75rem !important;
+          top: 4.5rem !important;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -215,59 +241,83 @@ export default function Sidebar() {
     setActiveMenu(id);
   };
   
+  // Function to handle navigation
+  const handleNavigation = (path) => {
+    // In a real application, you would use a router to navigate
+    // For example with react-router: navigate(path)
+    console.log('Navigating to:', path);
+    // You can replace this with actual navigation code
+    window.location.href = path;
+  };
+  
   const menuItems = [
     { 
       id: 'dashboard', 
       icon: <FaHouse size={18} />, 
       label: 'Dashboard',
-      subItems: []
+      subItems: [],
+      path: '/finance-tracker/dashboard'
     },
     { 
-      id: 'analytics', 
-      icon: <FaChartLine size={18} />, 
-      label: 'Analytics',
+      id: 'quick-overview', 
+      icon: <FaChartPie size={18} />, 
+      label: 'Quick Overview',
       subItems: [
-        { id: 'performance', label: 'Performance', icon: <FaChartPie size={14} /> },
-        { id: 'insights', label: 'AI Insights', icon: <FaRobot size={14} /> },
-        { id: 'reports', label: 'Reports', icon: <FaRegNoteSticky size={14} /> }
+        { id: 'account-balances', label: 'Account Balances', icon: <FaWallet size={14} />, path: '/finance-tracker/quick-overview/account-balances' },
+        { id: 'budget-overview', label: 'Budget Overview', icon: <FaChartLine size={14} />, path: '/finance-tracker/quick-overview/budget-overview' },
+        { id: 'recent-transactions', label: 'Recent Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/quick-overview/recent-transactions' },
+        { id: 'spending-by-category', label: 'Spending by Category', icon: <FaTableColumns size={14} />, path: '/finance-tracker/quick-overview/spending-by-category' },
+        { id: 'total-spending', label: 'Total Spending', icon: <FaChartPie size={14} />, path: '/finance-tracker/quick-overview/total-spending' }
       ]
     },
     { 
-      id: 'campaigns', 
+      id: 'cashflow', 
+      icon: <FaRegNoteSticky size={18} />, 
+      label: 'Cashflow',
+      subItems: [
+        { id: 'income', label: 'Income', icon: <FaChartLine size={14} />, path: '/finance-tracker/cashflow/income' },
+        { id: 'expenses', label: 'Expenses', icon: <FaWallet size={14} />, path: '/finance-tracker/cashflow/expenses' }
+      ]
+    },
+    { 
+      id: 'transactions', 
       icon: <FaTableColumns size={18} />, 
-      label: 'Campaigns',
+      label: 'Transactions',
       subItems: [
-        { id: 'active', label: 'Active Campaigns', icon: <FaShuffle size={14} /> },
-        { id: 'drafts', label: 'Drafts', icon: <FaRegNoteSticky size={14} /> },
-        { id: 'archived', label: 'Archived', icon: <FaRegBell size={14} /> }
+        { id: 'all', label: 'All Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/transactions/all' },
+        { id: 'loop', label: 'Loop Transactions', icon: <FaShuffle size={14} />, path: '/finance-tracker/transactions/loop-transactions' }
       ]
     },
     { 
-      id: 'automations', 
-      icon: <FaRobot size={18} />, 
-      label: 'Automations',
+      id: 'planning', 
+      icon: <FaChartLine size={18} />, 
+      label: 'Planning & Subscriptions',
       subItems: [
-        { id: 'flows', label: 'Workflow Flows', icon: <FaShuffle size={14} /> },
-        { id: 'triggers', label: 'Triggers', icon: <FaRegBell size={14} /> }
+        { id: 'budget-plan', label: 'Budget Plan', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/planning-and-subscriptions/budget-plan' },
+        { id: 'planned-payments', label: 'Planned Payments', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/planned-payments' },
+        { id: 'subscriptions', label: 'Subscriptions', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/subscriptions' }
       ]
     },
     { 
-      id: 'finances', 
+      id: 'portfolio', 
       icon: <FaWallet size={18} />, 
-      label: 'Finances',
-      subItems: []
+      label: 'Portfolio',
+      subItems: [
+        { id: 'accounts', label: 'Accounts', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/accounts' },
+        { id: 'crypto', label: 'Crypto', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/crypto' },
+        { id: 'stocks', label: 'Stocks & Funds', icon: <FaChartLine size={14} />, path: '/finance-tracker/portfolio/stocks-and-funds' }
+      ]
     },
     { 
-      id: 'users', 
-      icon: <FaUsers size={18} />, 
-      label: 'Users',
-      subItems: []
-    },
-    { 
-      id: 'partnerships', 
-      icon: <FaHandshake size={18} />, 
-      label: 'Partnerships',
-      subItems: []
+      id: 'statistics', 
+      icon: <FaChartPie size={18} />, 
+      label: 'Statistics',
+      subItems: [
+        { id: 'ai-optimization', label: 'AI Optimization', icon: <FaRobot size={14} />, path: '/finance-tracker/statistics/ai-optimization' },
+        { id: 'budget-plan-stats', label: 'Budget Plan Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/budget-plan-stats' },
+        { id: 'planned-payments-stats', label: 'Planned Payments Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/planned-payments-stats' },
+        { id: 'subscriptions-stats', label: 'Subscriptions Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/subscriptions-stats' }
+      ]
     },
     { 
       id: 'settings', 
@@ -284,8 +334,21 @@ export default function Sidebar() {
   ];
   
   const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+    const newState = !mobileMenuOpen;
+    setMobileMenuOpen(newState);
+    // Dispatch an event with the new state
+    window.dispatchEvent(new CustomEvent('sidebar-state-changed', { 
+      detail: { isOpen: newState } 
+    }));
   };
+  
+  // Make toggleMobileMenu accessible to Header component
+  useEffect(() => {
+    window.toggleSidebar = toggleMobileMenu;
+    return () => {
+      delete window.toggleSidebar;
+    };
+  }, []);
   
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
@@ -297,25 +360,25 @@ export default function Sidebar() {
     
     return (
       <div 
-        className={`h-screen ${sidebarWidth} transition-all duration-300 ease-in-out bg-[#0A0A0A] bg-opacity-90 sidebar-glass border-r border-[#222] border-opacity-50 relative flex flex-col neo-shadow overflow-hidden`}
+        className={`${isInMobileView ? 'h-screen' : 'h-[calc(100vh-2rem)]'} ${sidebarWidth} transition-all duration-300 ease-in-out bg-[#0A0A0A]/60 sidebar-glass ${isInMobileView ? '' : 'fixed top-4 left-4 bottom-4'} floating-sidebar rounded-2xl border border-[#222]/60 relative flex flex-col neo-shadow overflow-hidden`}
       >
-        {/* Toggle Button */}
-        {!isMobile && (
-          <button 
-            onClick={toggleCollapse}
-            className="absolute -right-3 top-20 w-6 h-6 bg-[#111] border border-[#333] rounded-full flex items-center justify-center text-gray-400 hover:text-[#50E3C2] z-10 sidebar-toggle-btn transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <FaCaretLeft size={11} className={`transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
-          </button>
-        )}
-        
-          {/* Logo */}
+        {/* Logo */}
         <div className={`py-6 ${collapsed && !isInMobileView ? 'px-4' : 'px-6'} flex items-center`}>
             {(!collapsed || isInMobileView) ? (
             <div className="flex items-center">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#50E3C2] to-[#3CCEA7] flex items-center justify-center shadow-lg mr-3">
+              <div 
+                onClick={!isInMobileView ? toggleCollapse : undefined}
+                className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#50E3C2] to-[#3CCEA7] flex items-center justify-center shadow-lg mr-3 cursor-pointer transition-all duration-200 hover:shadow-[0_0_15px_rgba(80,227,194,0.4)] hover:scale-105 clickable-logo"
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
                 <span className="font-bold text-black text-xl">Y</span>
+                {!isInMobileView && (
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-white/10 rounded-full flex items-center justify-center">
+                    <span className="text-[6px] text-black font-bold">
+                      {collapsed ? "+" : "-"}
+                    </span>
+                  </span>
+                )}
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">YSep<span className="text-[#50E3C2]">BB</span></h1>
@@ -324,8 +387,17 @@ export default function Sidebar() {
               </div>
             ) : (
             <div className="mx-auto">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#50E3C2] to-[#3CCEA7] flex items-center justify-center shadow-lg">
+              <div 
+                onClick={toggleCollapse}
+                className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#50E3C2] to-[#3CCEA7] flex items-center justify-center shadow-lg cursor-pointer transition-all duration-200 hover:shadow-[0_0_15px_rgba(80,227,194,0.4)] hover:scale-105 clickable-logo"
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
                 <span className="font-bold text-black text-xl">Y</span>
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-white/10 rounded-full flex items-center justify-center">
+                  <span className="text-[6px] text-black font-bold">
+                    {collapsed ? "+" : "-"}
+                  </span>
+                </span>
               </div>
               </div>
             )}
@@ -338,7 +410,7 @@ export default function Sidebar() {
                 <input 
                   type="text" 
                   placeholder="Search..." 
-                className="w-full bg-[#111] bg-opacity-50 border border-[#222] border-opacity-60 focus:border-[#50E3C2] rounded-xl py-2.5 pl-4 pr-10 text-sm focus:outline-none transition-all duration-200 text-gray-300 placeholder-gray-500"
+                  className="w-full bg-[#111]/50 backdrop-blur-md border border-[#222]/60 focus:border-[#50E3C2]/60 rounded-xl py-2.5 pl-4 pr-10 text-sm focus:outline-none transition-all duration-200 text-gray-300 placeholder-gray-500"
                 />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 group-hover:text-[#50E3C2] transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -376,6 +448,9 @@ export default function Sidebar() {
                   `}
                   onClick={() => {
                     handleMenuClick(item.id);
+                    if (item.path) {
+                      handleNavigation(item.path);
+                    }
                     if (item.subItems.length > 0 && (!collapsed || isInMobileView)) {
                       toggleSubmenu(item.id);
                     }
@@ -415,6 +490,12 @@ export default function Sidebar() {
                       <div 
                         key={subItem.id}
                         className="flex items-center px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#131313] cursor-pointer transition-all duration-150"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent parent menu item click
+                          if (subItem.path) {
+                            handleNavigation(subItem.path);
+                          }
+                        }}
                       >
                         <div className="mr-2.5 text-gray-500">{subItem.icon}</div>
                         <span>{subItem.label}</span>
@@ -426,7 +507,7 @@ export default function Sidebar() {
                 {/* Hover submenu for collapsed mode */}
                 {collapsed && !isInMobileView && item.subItems.length > 0 && hoverMenu === item.id && (
                   <div 
-                    className="absolute left-full top-0 ml-2 bg-[#161616] shadow-xl rounded-xl py-2 px-3 w-48 z-50 submenu-animation"
+                    className="absolute left-full top-0 ml-4 bg-[#0A0A0A]/90 backdrop-blur-md shadow-xl rounded-xl py-3 px-3 w-48 z-50 submenu-animation border border-[#222]/60"
                     onMouseEnter={() => handleMenuHover(item.id)}
                     onMouseLeave={handleMenuLeave}
                   >
@@ -435,7 +516,13 @@ export default function Sidebar() {
                       {item.subItems.map((subItem) => (
                         <div 
                           key={subItem.id}
-                          className="flex items-center px-2 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#222] cursor-pointer transition-all duration-150"
+                          className="flex items-center px-2 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#131313]/70 cursor-pointer transition-all duration-150"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent parent menu item click
+                            if (subItem.path) {
+                              handleNavigation(subItem.path);
+                            }
+                          }}
                         >
                           <div className="mr-2.5 text-gray-500">{subItem.icon}</div>
                           <span>{subItem.label}</span>
@@ -451,7 +538,7 @@ export default function Sidebar() {
           {/* Favorites section */}
             {(!collapsed || isInMobileView) && (
             <>
-              <div className="sidebar-divider my-4"></div>
+              <div className="sidebar-divider my-4 mx-3"></div>
               
               <div className="mb-2 px-3">
                 <h2 className="text-[11px] uppercase tracking-wider text-gray-500 font-medium">Favorites</h2>
@@ -461,7 +548,7 @@ export default function Sidebar() {
                 {favoriteItems.map((item) => (
                   <div 
                     key={item.id}
-                    className="flex items-center px-3 py-2.5 mx-3 rounded-xl hover:bg-[#131313] text-gray-300 hover:text-white transition-colors duration-150 cursor-pointer menu-item-hover"
+                    className="flex items-center px-3 py-2.5 mx-3 rounded-xl hover:bg-[#131313]/70 text-gray-300 hover:text-white transition-colors duration-150 cursor-pointer menu-item-hover"
                   >
                     <div className="mr-3">{item.icon}</div>
                     <span className="text-sm">{item.label}</span>
@@ -477,7 +564,7 @@ export default function Sidebar() {
               {favoriteItems.map((item) => (
                 <div 
                   key={item.id}
-                  className="w-10 h-10 rounded-xl hover:bg-[#131313] flex items-center justify-center transition-colors duration-150 cursor-pointer hover-scale"
+                  className="w-10 h-10 rounded-xl hover:bg-[#131313]/70 flex items-center justify-center transition-colors duration-150 cursor-pointer hover-scale"
                 >
                       {item.icon}
                   </div>
@@ -488,8 +575,9 @@ export default function Sidebar() {
         
         {/* Server status footer */}
         <div className={`
-          mt-auto border-t border-[#222] border-opacity-40 bg-[#0A0A0A] bg-opacity-95
+          mt-auto border-t border-[#222]/60 bg-[#0A0A0A]/70 backdrop-blur-sm
           ${!collapsed || isInMobileView ? 'p-5' : 'p-3 flex justify-center'}
+          ${isInMobileView ? '' : 'rounded-b-2xl'}
         `}>
           {(!collapsed || isInMobileView) ? (
             <div className="flex items-center justify-between">
@@ -562,39 +650,17 @@ export default function Sidebar() {
     );
   };
   
-  // Mobile menu button
-  const renderMobileMenuButton = () => {
-    if (isMobile) {
-      return (
-        <button 
-          onClick={toggleMobileMenu}
-          className={`
-            fixed top-4 left-4 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-xl 
-            backdrop-blur-md bg-[#111]/70 border border-[#222]/50
-            flex items-center justify-center text-white
-            transition-all duration-200 hover:scale-105
-            ${mobileMenuOpen ? 'rotate-90' : 'rotate-0'}
-          `}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileMenuOpen ? <FaXmark size={16} /> : <FaBars size={16} />}
-        </button>
-      );
-    }
-    return null;
-  };
-  
   // Mobile menu overlay
   const renderMobileMenu = () => {
     if (isMobile && mobileMenuOpen) {
       return (
         <>
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 animate-fadeIn"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 animate-fadeIn"
             onClick={toggleMobileMenu}
           ></div>
           <div className={`
-            fixed inset-y-0 left-0 z-50 transition-transform duration-300 transform-gpu max-w-full
+            fixed inset-y-0 left-0 z-50 transition-transform duration-300 transform-gpu max-w-full mt-4 mb-4 ml-4
             ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
           `}>
             <SidebarContent isInMobileView={true} />
@@ -605,18 +671,15 @@ export default function Sidebar() {
     return null;
   };
   
-  // Mobile view only renders the button and potentially the menu
+  // Mobile view - now just renders the sidebar at the top of the screen
   if (isMobile) {
     return (
       <>
-        {renderMobileMenuButton()}
         {renderMobileMenu()}
       </>
     );
   }
   
   // Desktop/tablet view
-  return (
-      <SidebarContent />
-  );
+  return <SidebarContent />;
 } 

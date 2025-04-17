@@ -1,4 +1,4 @@
-# Stakeint - Crypto Staking Platform
+# YSeppBB - Personal Balance Beam
 
 This is a modern cryptocurrency staking platform interface built with Next.js and Tailwind CSS. It replicates the UI shown in the provided design reference.
 

@@ -28,6 +28,7 @@ export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const profileRef = useRef(null);
   const notificationRef = useRef(null);
@@ -81,8 +82,11 @@ export default function Header() {
     const style = document.createElement('style');
     style.textContent = `
       .header-glass {
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3), 
+                    0 1px 3px rgba(0, 0, 0, 0.1), 
+                    inset 0 1px 1px rgba(255, 255, 255, 0.03);
       }
       
       @keyframes dropIn {
@@ -136,16 +140,16 @@ export default function Header() {
       }
       
       .header-button {
-        border: 1px solid rgba(80, 227, 194, 0.05);
-        background: rgba(17, 17, 17, 0.4);
+        border: 1px solid rgba(80, 227, 194, 0.1);
+        background: rgba(17, 17, 17, 0.3);
         backdrop-filter: blur(10px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: all 0.2s ease;
       }
       
       .header-button:hover {
-        background: rgba(17, 17, 17, 0.6);
-        border-color: rgba(80, 227, 194, 0.2);
+        background: rgba(17, 17, 17, 0.5);
+        border-color: rgba(80, 227, 194, 0.3);
         transform: translateY(-1px);
       }
       
@@ -181,11 +185,12 @@ export default function Header() {
         .profile-dropdown,
         .notification-dropdown {
           position: fixed !important;
-          top: 4rem !important;
+          top: 4.5rem !important;
           left: 1rem !important;
           right: 1rem !important;
           width: calc(100% - 2rem) !important;
           margin-top: 0 !important;
+          border-radius: 1rem !important;
         }
       }
       
@@ -206,7 +211,7 @@ export default function Header() {
         max-width: 600px;
         margin: 0 auto;
         max-height: 80vh;
-        border-radius: 12px;
+        border-radius: 1rem;
         overflow: hidden;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         z-index: 50;
@@ -215,6 +220,14 @@ export default function Header() {
       @media (max-height: 600px) {
         .search-popup {
           max-height: 90vh;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        header {
+          left: 1rem !important;
+          right: 1rem !important;
+          top: 0.75rem !important;
         }
       }
     `;
@@ -244,8 +257,13 @@ export default function Header() {
   const toggleMobileSidebar = () => {
     // Dispatch custom event to toggle sidebar
     // This will be caught by the Sidebar component
-    const event = new CustomEvent('toggle-sidebar');
-    window.dispatchEvent(event);
+    if (window.toggleSidebar) {
+      window.toggleSidebar();
+    } else {
+      // Fallback to custom event if direct function access is not available
+      const event = new CustomEvent('toggle-sidebar');
+      window.dispatchEvent(event);
+    }
   };
   
   // Mock search results data
@@ -291,8 +309,16 @@ export default function Header() {
       setNotificationsOpen(false);
     };
     
+    const handleSidebarStateChanged = (event) => {
+      setSidebarOpen(event.detail.isOpen);
+    };
+    
     window.addEventListener('sidebar-toggled', handleSidebarToggle);
-    return () => window.removeEventListener('sidebar-toggled', handleSidebarToggle);
+    window.addEventListener('sidebar-state-changed', handleSidebarStateChanged);
+    return () => {
+      window.removeEventListener('sidebar-toggled', handleSidebarToggle);
+      window.removeEventListener('sidebar-state-changed', handleSidebarStateChanged);
+    };
   }, []);
   
   // Ensure search popup is properly centered
@@ -315,8 +341,8 @@ export default function Header() {
   
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 md:left-64 bg-[#0A0A0A] bg-opacity-90 header-glass z-[100] h-16 border-b border-[#222] border-opacity-40 shadow-md shadow-black/20">
-        <div className="flex items-center justify-between h-full px-4 md:px-6">
+      <header className="fixed top-4 right-4 left-4 md:left-[calc(64px+1rem)] md:right-4 md:top-4 mx-auto max-w-6xl rounded-2xl bg-[#0A0A0A]/60 header-glass z-[100] h-16 border border-[#222]/60 border-opacity-40 shadow-lg shadow-black/30">
+        <div className="flex items-center justify-between h-full px-4 md:px-6 w-full mx-auto">
           {/* Left - Page title on mobile, search on desktop */}
           <div className="flex items-center">
             {isMobile ? (
@@ -385,15 +411,15 @@ export default function Header() {
               
               {/* Notification dropdown */}
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 notification-dropdown w-[calc(100vw-2rem)] sm:w-80 bg-[#121212] rounded-xl border border-[#222] shadow-xl dropdown-animation z-50">
-                  <div className="px-4 py-3 border-b border-[#222] flex items-center justify-between">
+                <div className="absolute right-0 mt-2 notification-dropdown w-[calc(100vw-2rem)] sm:w-80 bg-[#121212]/90 backdrop-blur-md rounded-xl border border-[#222]/70 shadow-xl dropdown-animation z-50">
+                  <div className="px-4 py-3 border-b border-[#222]/70 flex items-center justify-between">
                     <h3 className="font-medium text-white">Notifications</h3>
                     <button className="text-xs text-[#50E3C2] hover:underline">Mark all as read</button>
                   </div>
                   
                   <div className="mobile-dropdown">
                     {notificationItems.map((item) => (
-                      <div key={item.id} className={`p-3 border-b border-[#1e1e1e] last:border-0 hover:bg-[#1a1a1a] transition-colors cursor-pointer ${!item.read ? 'bg-[#141414]' : ''}`}>
+                      <div key={item.id} className={`p-3 border-b border-[#1e1e1e]/70 last:border-0 hover:bg-[#1a1a1a]/70 transition-colors cursor-pointer ${!item.read ? 'bg-[#141414]/70' : ''}`}>
                         <div className="flex items-start">
                           <div className={`min-w-[8px] h-2 rounded-full mt-1.5 ${!item.read ? 'bg-[#50E3C2]' : 'bg-transparent'} mr-2 flex-shrink-0`}></div>
                           <div className="w-full min-w-0">
@@ -408,7 +434,7 @@ export default function Header() {
                     ))}
                   </div>
                   
-                  <div className="px-4 py-2 bg-[#0f0f0f] text-center">
+                  <div className="px-4 py-2 bg-[#0f0f0f]/70 text-center rounded-b-xl">
                     <button className="text-sm text-[#50E3C2] hover:underline">View all notifications</button>
                   </div>
                 </div>
@@ -442,8 +468,8 @@ export default function Header() {
               
               {/* Profile dropdown menu */}
               {profileOpen && (
-                <div className="absolute right-0 mt-2 profile-dropdown w-[calc(100vw-2rem)] sm:w-64 bg-[#121212] rounded-xl border border-[#222] shadow-xl dropdown-animation z-50">
-                  <div className="px-5 py-4 border-b border-[#222]">
+                <div className="absolute right-0 mt-2 profile-dropdown w-[calc(100vw-2rem)] sm:w-64 bg-[#121212]/90 backdrop-blur-md rounded-xl border border-[#222]/70 shadow-xl dropdown-animation z-50">
+                  <div className="px-5 py-4 border-b border-[#222]/70">
                     <div className="flex items-center">
                       <div className="relative overflow-hidden">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#50E3C2]/20 to-[#3CCEA7]/20 flex items-center justify-center overflow-hidden border border-[#50E3C2]/20">
@@ -499,11 +525,11 @@ export default function Header() {
             {/* Mobile menu button - only visible on mobile */}
             {isMobile && (
               <button 
-                className="header-button w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-white"
+                className={`header-button w-9 h-9 rounded-xl flex items-center justify-center transition-colors duration-200 ${sidebarOpen ? 'bg-[#50E3C2]/20 text-[#50E3C2] border-[#50E3C2]/30' : 'text-gray-400 hover:text-[#50E3C2]'}`}
                 onClick={toggleMobileSidebar}
                 aria-label="Toggle sidebar menu"
               >
-                <FaBars size={16} />
+                {sidebarOpen ? <FaXmark size={16} /> : <FaBars size={16} />}
               </button>
             )}
           </div>
@@ -519,9 +545,9 @@ export default function Header() {
           ></div>
           <div 
             ref={searchPopupRef}
-            className="search-popup bg-[#121212] border border-[#222] shadow-2xl search-popup-animation"
+            className="search-popup bg-[#121212]/90 backdrop-blur-md border border-[#222]/70 shadow-2xl search-popup-animation"
           >
-            <div className="flex items-center p-3 md:p-4 border-b border-[#222]">
+            <div className="flex items-center p-3 md:p-4 border-b border-[#222]/70">
               <FaMagnifyingGlass className="text-[#50E3C2] mr-2 md:mr-3" size={16} />
               <input
                 ref={searchInputRef}
@@ -639,9 +665,9 @@ export default function Header() {
               )}
             </div>
             
-            <div className="p-2 md:p-3 border-t border-[#222] text-xs text-gray-500 flex flex-col xs:flex-row justify-between space-y-2 xs:space-y-0">
-              <div>Press <kbd className="px-2 py-1 bg-[#222] rounded text-gray-400 text-[10px]">↑</kbd> <kbd className="px-2 py-1 bg-[#222] rounded text-gray-400 text-[10px]">↓</kbd> to navigate</div>
-              <div>Press <kbd className="px-2 py-1 bg-[#222] rounded text-gray-400 text-[10px]">Enter</kbd> to select</div>
+            <div className="p-2 md:p-3 border-t border-[#222]/70 text-xs text-gray-500 flex flex-col xs:flex-row justify-between space-y-2 xs:space-y-0">
+              <div>Press <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">↑</kbd> <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">↓</kbd> to navigate</div>
+              <div>Press <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">Enter</kbd> to select</div>
             </div>
           </div>
         </div>

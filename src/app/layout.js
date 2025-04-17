@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Stakeint - Crypto Staking Platform",
+  title: "YSeppBB - Personal Balance Beam",
   description: "Cryptocurrency staking platform with liquid staking portfolios",
 };
 
