@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FaArrowDown, FaChartPie, FaUtensils, FaHome, FaCarSide, FaFilm, FaLightbulb, FaShoppingBag, FaHeartbeat, FaGraduationCap, FaChartBar } from 'react-icons/fa';
+import { FaArrowDown, FaChartPie, FaUtensils, FaHouse, FaCarSide, FaFilm, FaLightbulb, FaCartShopping, FaHeart, FaGraduationCap, FaChartBar } from 'react-icons/fa6';
 import Layout from '@/components/Layout';
 import PageContainer from '@/components/PageContainer';
 import ChartCard from '@/components/dashboard/ChartCard';
@@ -23,7 +23,7 @@ export default function ExpensesPage() {
       category: (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#F97316]/10 flex items-center justify-center mr-3">
-            <FaHome className="text-[#F97316]" />
+            <FaHouse className="text-[#F97316]" />
           </div>
           <span>Housing</span>
         </div>
@@ -93,7 +93,7 @@ export default function ExpensesPage() {
       category: (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#0EA5E9]/10 flex items-center justify-center mr-3">
-            <FaShoppingBag className="text-[#0EA5E9]" />
+            <FaCartShopping className="text-[#0EA5E9]" />
           </div>
           <span>Shopping</span>
         </div>
@@ -107,7 +107,7 @@ export default function ExpensesPage() {
       category: (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#F43F5E]/10 flex items-center justify-center mr-3">
-            <FaHeartbeat className="text-[#F43F5E]" />
+            <FaHeart className="text-[#F43F5E]" />
           </div>
           <span>Health</span>
         </div>
@@ -173,7 +173,7 @@ export default function ExpensesPage() {
           <StatCard
             title="Largest Category"
             value="Housing"
-            icon={<FaHome size={16} />}
+            icon={<FaHouse size={16} />}
             trend="up"
             trendValue="45.2%"
           />

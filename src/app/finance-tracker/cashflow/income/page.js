@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FaArrowUp, FaChartLine, FaRegNoteSticky, FaCalendarAlt, FaBuilding, FaMoneyBillWave, FaBriefcase, FaChartBar, FaHandHoldingUsd } from 'react-icons/fa';
+import { FaArrowUp, FaChartLine, FaRegNoteSticky, FaCalendarDays, FaBuilding, FaMoneyBill, FaBriefcase, FaChartBar, FaHandHoldingDollar } from 'react-icons/fa6';
 import Layout from '@/components/Layout';
 import PageContainer from '@/components/PageContainer';
 import ChartCard from '@/components/dashboard/ChartCard';
@@ -51,7 +51,7 @@ export default function IncomePage() {
       source: (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#F97316]/10 flex items-center justify-center mr-3">
-            <FaHandHoldingUsd className="text-[#F97316]" />
+            <FaHandHoldingDollar className="text-[#F97316]" />
           </div>
           <span>Freelance Project</span>
         </div>
@@ -65,7 +65,7 @@ export default function IncomePage() {
       source: (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center mr-3">
-            <FaMoneyBillWave className="text-[#8B5CF6]" />
+            <FaMoneyBill className="text-[#8B5CF6]" />
           </div>
           <span>Dividend Payment</span>
         </div>
@@ -108,7 +108,7 @@ export default function IncomePage() {
           <StatCard
             title="Monthly Income"
             value={`$${totalIncome.toLocaleString()}`}
-            icon={<FaMoneyBillWave size={16} />}
+            icon={<FaMoneyBill size={16} />}
             trend="up"
             trendValue="5.3%"
           />

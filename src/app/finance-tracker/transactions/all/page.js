@@ -1,214 +1,299 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaRegNoteSticky, FaFilter, FaDownload, FaPlus } from 'react-icons/fa6';
+import { FaRegNoteSticky, FaArrowDown, FaArrowUp, FaFilter, FaUtensils, FaHouse, FaCarSide, FaFilm, FaLightbulb, FaCartShopping, FaHeart, FaGraduationCap, FaCalendarDays } from 'react-icons/fa6';
 import Layout from '@/components/Layout';
 import PageContainer from '@/components/PageContainer';
 import ChartCard from '@/components/dashboard/ChartCard';
 import DataTable from '@/components/dashboard/DataTable';
+import StatCard from '@/components/dashboard/StatCard';
 
 export default function AllTransactionsPage() {
-  const [filterVisible, setFilterVisible] = useState(false);
+  const [filter, setFilter] = useState('all'); // all, income, expense
   
   // Mock data for transactions
   const transactionColumns = [
     { header: 'Date', accessor: 'date' },
     { header: 'Description', accessor: 'description' },
     { header: 'Category', accessor: 'category' },
-    { header: 'Account', accessor: 'account' },
     { header: 'Amount', accessor: 'amount' },
-    { header: 'Status', accessor: 'status' }
+    { header: 'Account', accessor: 'account' }
   ];
   
-  const transactionData = [
+  const allTransactions = [
     { 
-      date: 'Apr 15, 2025', 
-      description: 'Grocery Shopping', 
-      category: 'Food', 
-      account: 'Main Checking', 
-      amount: '-$85.33',
-      status: 'Completed'
-    },
-    { 
-      date: 'Apr 13, 2025', 
-      description: 'Netflix Subscription', 
-      category: 'Entertainment', 
-      account: 'Credit Card', 
-      amount: '-$14.99',
-      status: 'Completed'
-    },
-    { 
-      date: 'Apr 10, 2025', 
+      date: 'Mar 01, 2024', 
       description: 'Salary Deposit', 
-      category: 'Income', 
-      account: 'Main Checking', 
-      amount: '+$3,500.00',
-      status: 'Completed'
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
+            <FaArrowDown className="text-green-500 rotate-180" size={10} />
+          </div>
+          <span>Income</span>
+        </div>
+      ),
+      amount: <span className="text-green-500">+$3,800.00</span>,
+      account: 'Main Checking'
     },
     { 
-      date: 'Apr 08, 2025', 
-      description: 'Electricity Bill', 
-      category: 'Utilities', 
-      account: 'Main Checking', 
-      amount: '-$78.25',
-      status: 'Completed'
+      date: 'Mar 01, 2024', 
+      description: 'Rent Payment', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#F97316]/10 flex items-center justify-center mr-2">
+            <FaHouse className="text-[#F97316]" size={10} />
+          </div>
+          <span>Housing</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$1,200.00</span>,
+      account: 'Main Checking'
     },
     { 
-      date: 'Apr 05, 2025', 
-      description: 'Restaurant', 
-      category: 'Food', 
-      account: 'Credit Card', 
-      amount: '-$65.40',
-      status: 'Completed'
+      date: 'Mar 02, 2024', 
+      description: 'Grocery Store', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#3B82F6]/10 flex items-center justify-center mr-2">
+            <FaUtensils className="text-[#3B82F6]" size={10} />
+          </div>
+          <span>Food</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$85.74</span>,
+      account: 'Joint Account'
     },
     { 
-      date: 'Apr 03, 2025', 
+      date: 'Mar 03, 2024', 
       description: 'Gas Station', 
-      category: 'Transportation', 
-      account: 'Credit Card', 
-      amount: '-$45.75',
-      status: 'Completed'
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#10B981]/10 flex items-center justify-center mr-2">
+            <FaCarSide className="text-[#10B981]" size={10} />
+          </div>
+          <span>Transportation</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$45.33</span>,
+      account: 'Credit Card'
     },
     { 
-      date: 'Apr 01, 2025', 
-      description: 'Monthly Transfer to Savings', 
-      category: 'Transfer', 
-      account: 'Main Checking', 
-      amount: '-$500.00',
-      status: 'Completed'
+      date: 'Mar 04, 2024', 
+      description: 'Movie Tickets', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center mr-2">
+            <FaFilm className="text-[#8B5CF6]" size={10} />
+          </div>
+          <span>Entertainment</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$24.99</span>,
+      account: 'Credit Card'
     },
     { 
-      date: 'Apr 01, 2025', 
-      description: 'Monthly Transfer from Checking', 
-      category: 'Transfer', 
-      account: 'Savings Account', 
-      amount: '+$500.00',
-      status: 'Completed'
+      date: 'Mar 05, 2024', 
+      description: 'Electric Bill', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#EC4899]/10 flex items-center justify-center mr-2">
+            <FaLightbulb className="text-[#EC4899]" size={10} />
+          </div>
+          <span>Utilities</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$78.25</span>,
+      account: 'Main Checking'
     },
     { 
-      date: 'Mar 29, 2025', 
-      description: 'Phone Bill', 
-      category: 'Utilities', 
-      account: 'Main Checking', 
-      amount: '-$85.99',
-      status: 'Completed'
+      date: 'Mar 05, 2024', 
+      description: 'Clothing Store', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#0EA5E9]/10 flex items-center justify-center mr-2">
+            <FaCartShopping className="text-[#0EA5E9]" size={10} />
+          </div>
+          <span>Shopping</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$67.85</span>,
+      account: 'Credit Card'
     },
     { 
-      date: 'Mar 25, 2025', 
-      description: 'Online Shopping', 
-      category: 'Shopping', 
-      account: 'Credit Card', 
-      amount: '-$125.30',
-      status: 'Completed'
+      date: 'Mar 06, 2024', 
+      description: 'Pharmacy', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#F43F5E]/10 flex items-center justify-center mr-2">
+            <FaHeart className="text-[#F43F5E]" size={10} />
+          </div>
+          <span>Health</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$32.50</span>,
+      account: 'Health Savings'
+    },
+    { 
+      date: 'Mar 07, 2024', 
+      description: 'Online Course', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-[#14B8A6]/10 flex items-center justify-center mr-2">
+            <FaGraduationCap className="text-[#14B8A6]" size={10} />
+          </div>
+          <span>Education</span>
+        </div>
+      ),
+      amount: <span className="text-red-500">-$75.00</span>,
+      account: 'Main Checking'
+    },
+    { 
+      date: 'Mar 10, 2024', 
+      description: 'Freelance Payment', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
+            <FaArrowDown className="text-green-500 rotate-180" size={10} />
+          </div>
+          <span>Income</span>
+        </div>
+      ),
+      amount: <span className="text-green-500">+$350.00</span>,
+      account: 'Main Checking'
+    },
+    { 
+      date: 'Mar 12, 2024', 
+      description: 'Investment Dividend', 
+      category: (
+        <div className="flex items-center">
+          <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center mr-2">
+            <FaArrowDown className="text-green-500 rotate-180" size={10} />
+          </div>
+          <span>Income</span>
+        </div>
+      ),
+      amount: <span className="text-green-500">+$125.32</span>,
+      account: 'Investment Account'
     }
   ];
+  
+  // Filter transactions based on selected filter
+  const filteredTransactions = allTransactions.filter(transaction => {
+    if (filter === 'all') return true;
+    const amount = transaction.amount.props.children;
+    return filter === 'income' ? amount.startsWith('+') : amount.startsWith('-');
+  });
+  
+  // Calculate totals
+  const totalIncome = allTransactions
+    .filter(t => t.amount.props.children.startsWith('+'))
+    .reduce((sum, t) => {
+      const amount = parseFloat(t.amount.props.children.slice(1).replace(/[$,]/g, ''));
+      return sum + amount;
+    }, 0);
+    
+  const totalExpenses = allTransactions
+    .filter(t => t.amount.props.children.startsWith('-'))
+    .reduce((sum, t) => {
+      const amount = parseFloat(t.amount.props.children.slice(1).replace(/[$,]/g, ''));
+      return sum + amount;
+    }, 0);
+    
+  const netCashFlow = totalIncome - totalExpenses;
   
   return (
     <Layout>
       <PageContainer 
         title="All Transactions" 
-        subtitle="Comprehensive view of your financial activity"
+        subtitle="View and manage all your financial transactions"
         icon={<FaRegNoteSticky size={20} />}
       >
-        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-          <div className="flex space-x-2">
-            <button 
-              className="flex items-center px-4 py-2 bg-[#131313] rounded-xl hover:bg-[#1a1a1a] transition-colors text-white"
-              onClick={() => setFilterVisible(!filterVisible)}
-            >
-              <FaFilter size={14} className="mr-2 text-[#50E3C2]" />
-              <span>Filter</span>
-            </button>
-            
-            <button className="flex items-center px-4 py-2 bg-[#131313] rounded-xl hover:bg-[#1a1a1a] transition-colors text-white">
-              <FaDownload size={14} className="mr-2 text-[#50E3C2]" />
-              <span>Export</span>
-            </button>
-          </div>
-          
-          <button className="flex items-center px-4 py-2 bg-gradient-to-r from-[#50E3C2] to-[#3CCEA7] rounded-xl text-black font-medium text-sm">
-            <FaPlus size={14} className="mr-2" />
-            <span>Add Transaction</span>
-          </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Total Income"
+            value={`$${totalIncome.toLocaleString()}`}
+            icon={<FaArrowUp size={16} />}
+            trend="up"
+            trendValue="5.2%"
+          />
+          <StatCard
+            title="Total Expenses"
+            value={`$${totalExpenses.toLocaleString()}`}
+            icon={<FaArrowDown size={16} />}
+            trend="down"
+            trendValue="2.8%"
+          />
+          <StatCard
+            title="Net Cash Flow"
+            value={`$${netCashFlow.toLocaleString()}`}
+            icon={<FaRegNoteSticky size={16} />}
+            trend={netCashFlow > 0 ? "up" : "down"}
+            trendValue="8.1%"
+          />
+          <StatCard
+            title="Transactions"
+            value={allTransactions.length}
+            icon={<FaCalendarDays size={16} />}
+          />
         </div>
-        
-        {filterVisible && (
-          <div className="bg-[#131313] p-6 rounded-2xl mb-6 border border-[#222]/40">
-            <h3 className="text-white mb-4 font-medium">Filter Transactions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div>
-                <label className="block text-gray-400 text-sm mb-2">Date Range</label>
-                <select className="w-full bg-[#1a1a1a] text-white rounded-xl border border-[#333] px-4 py-2.5">
-                  <option>Last 30 days</option>
-                  <option>Last 3 months</option>
-                  <option>Last 6 months</option>
-                  <option>Last year</option>
-                  <option>Custom range</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-gray-400 text-sm mb-2">Category</label>
-                <select className="w-full bg-[#1a1a1a] text-white rounded-xl border border-[#333] px-4 py-2.5">
-                  <option>All Categories</option>
-                  <option>Food</option>
-                  <option>Entertainment</option>
-                  <option>Utilities</option>
-                  <option>Transportation</option>
-                  <option>Shopping</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-gray-400 text-sm mb-2">Account</label>
-                <select className="w-full bg-[#1a1a1a] text-white rounded-xl border border-[#333] px-4 py-2.5">
-                  <option>All Accounts</option>
-                  <option>Main Checking</option>
-                  <option>Savings Account</option>
-                  <option>Credit Card</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-3">
-              <button className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
-                Reset
-              </button>
-              <button className="px-4 py-2 bg-[#50E3C2] text-black rounded-xl font-medium">
-                Apply Filters
-              </button>
-            </div>
-          </div>
-        )}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <ChartCard 
-            title="Transaction Volume"
-            subtitle="Number of transactions by day"
+            title="Income vs. Expenses"
+            subtitle="Monthly comparison"
+            height="h-80"
           />
           <ChartCard 
-            title="Cash Flow"
-            subtitle="Income vs. Expenses"
+            title="Transaction Categories"
+            subtitle="Breakdown by type"
+            height="h-80"
           />
+        </div>
+        
+        <div className="mb-4 bg-[#131313] rounded-2xl border border-[#222]/40 p-4 flex items-center justify-between">
+          <h3 className="text-white font-medium">Transaction Filters</h3>
+          <div className="flex space-x-3">
+            <button 
+              onClick={() => setFilter('all')}
+              className={`px-4 py-2 rounded-xl flex items-center text-sm
+                ${filter === 'all' 
+                  ? 'bg-[#50E3C2]/10 text-[#50E3C2]' 
+                  : 'bg-[#222]/60 text-gray-300 hover:bg-[#222]/80'
+                }`}
+            >
+              <FaFilter size={12} className="mr-2" /> All
+            </button>
+            <button 
+              onClick={() => setFilter('income')}
+              className={`px-4 py-2 rounded-xl flex items-center text-sm
+                ${filter === 'income' 
+                  ? 'bg-green-500/10 text-green-500' 
+                  : 'bg-[#222]/60 text-gray-300 hover:bg-[#222]/80'
+                }`}
+            >
+              <FaArrowUp size={12} className="mr-2" /> Income
+            </button>
+            <button 
+              onClick={() => setFilter('expense')}
+              className={`px-4 py-2 rounded-xl flex items-center text-sm
+                ${filter === 'expense' 
+                  ? 'bg-red-500/10 text-red-500' 
+                  : 'bg-[#222]/60 text-gray-300 hover:bg-[#222]/80'
+                }`}
+            >
+              <FaArrowDown size={12} className="mr-2" /> Expenses
+            </button>
+          </div>
         </div>
         
         <div className="mb-8">
           <DataTable
             title="Transaction History"
-            subtitle="Your complete transaction history"
+            subtitle={`Showing ${filteredTransactions.length} ${filter !== 'all' ? filter : ''} transactions`}
             columns={transactionColumns}
-            data={transactionData}
+            data={filteredTransactions}
+            showActionButtons={true}
           />
-        </div>
-        
-        <div className="flex justify-center">
-          <div className="inline-flex rounded-xl overflow-hidden">
-            <button className="px-4 py-2 bg-[#131313] text-gray-400 hover:bg-[#1a1a1a] hover:text-white transition-colors border-r border-[#222]">Previous</button>
-            <button className="px-4 py-2 bg-[#50E3C2]/20 text-[#50E3C2] font-medium">1</button>
-            <button className="px-4 py-2 bg-[#131313] text-gray-400 hover:bg-[#1a1a1a] hover:text-white transition-colors">2</button>
-            <button className="px-4 py-2 bg-[#131313] text-gray-400 hover:bg-[#1a1a1a] hover:text-white transition-colors">3</button>
-            <button className="px-4 py-2 bg-[#131313] text-gray-400 hover:bg-[#1a1a1a] hover:text-white transition-colors border-l border-[#222]">Next</button>
-          </div>
         </div>
       </PageContainer>
     </Layout>
