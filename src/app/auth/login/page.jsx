@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AuthLayout from '@/components/auth/AuthLayout';
 import TwoFactorAuth from '@/components/auth/TwoFactorAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   FaCircleInfo, 
   FaGoogle, 
@@ -16,8 +17,10 @@ import {
   FaWallet
 } from 'react-icons/fa6';
 
-// Mock components since we don't have the actual dependencies installed
-function SocialAuthButton({ provider, isLoading, onSuccess, onError }) {
+// Integrated Social Auth Button that uses our AuthContext
+function SocialAuthButton({ provider, isLoading, setIsLoading }) {
+  const { loginWithProvider } = useAuth();
+
   const providerConfig = {
     google: {
       name: 'Google',
@@ -41,14 +44,17 @@ function SocialAuthButton({ provider, isLoading, onSuccess, onError }) {
   }
   
   const handleSignIn = async () => {
-    // Mock authentication
-    setTimeout(() => {
-      if (Math.random() > 0.1) { // 90% success rate
-        onSuccess({ user: { name: 'Demo User', email: 'user@example.com' } });
-      } else {
-        onError('Authentication failed');
-      }
-    }, 1500);
+    try {
+      setIsLoading(prevState => ({ ...prevState, [provider]: true }));
+      
+      // Login with provider (may redirect to 2FA)
+      await loginWithProvider(provider);
+      
+      // Note: Redirect is handled by the auth context
+    } catch (error) {
+      console.error(`${provider} sign-in error:`, error);
+      setIsLoading(prevState => ({ ...prevState, [provider]: false }));
+    }
   };
   
   return (
@@ -159,6 +165,15 @@ function Web3WalletAuth({ onConnect }) {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { 
+    isAuthenticated, 
+    loginWithCredentials, 
+    requires2FA, 
+    pendingLoginData,
+    handle2FAVerification 
+  } = useAuth();
+  
   const [isLoading, setIsLoading] = useState({
     google: false,
     apple: false,
@@ -166,9 +181,40 @@ export default function LoginPage() {
   });
   const [authError, setAuthError] = useState(null);
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [twoFactorMethods, setTwoFactorMethods] = useState(['app', 'sms', 'email']);
+  const [pendingUser, setPendingUser] = useState(null);
+
+  // Handle redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+      router.push(callbackUrl);
+      return;
+    }
+    
+    // Check if 2FA is required from URL param (used after OAuth redirect)
+    const require2FA = searchParams.get('require2FA') === 'true';
+    if (require2FA || requires2FA) {
+      setShowTwoFactor(true);
+      
+      // If we have pending login data, extract user info for 2FA
+      if (pendingLoginData?.userData) {
+        setPendingUser(pendingLoginData.userData);
+        
+        // Set available 2FA methods based on user data
+        const methods = [];
+        if (pendingLoginData.userData.provider === 'google') {
+          methods.push('app');
+        }
+        methods.push('sms', 'email');
+        setTwoFactorMethods(methods);
+      }
+    }
+  }, [isAuthenticated, router, searchParams, requires2FA, pendingLoginData]);
 
   const handleSocialSuccess = (result) => {
-    // For demo, we'll simulate 2FA requirement
+    // For oauth/social logins, the 2FA requirement is handled in the loginWithProvider method
+    // If 2FA is required, it will redirect back to login with the require2FA query param
     setShowTwoFactor(true);
   };
 
@@ -183,27 +229,72 @@ export default function LoginPage() {
 
   const handlePasskeyAuth = (result) => {
     if (result.success) {
-      // Simulate successful login redirect
-      setTimeout(() => router.push('/finance-tracker/dashboard'), 1000);
+      // Create mock user for passkey auth
+      const mockUser = {
+        name: 'Passkey User',
+        email: 'passkey@example.com',
+        provider: 'passkey',
+        // 50% chance of requiring 2FA for demo purposes
+        twoFactorEnabled: Math.random() > 0.5
+      };
+      
+      // Login with our auth system
+      const loginResult = loginWithCredentials(mockUser, 'passkey-auth-token', null, true);
+      
+      // If 2FA is required, show the 2FA form
+      if (loginResult.requires2FA) {
+        setPendingUser(mockUser);
+        setTwoFactorMethods(['app', 'sms', 'email']);
+        setShowTwoFactor(true);
+        return;
+      }
+      
+      // Otherwise, redirect based on callback url or default
+      const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+      router.push(callbackUrl);
     }
   };
 
   const handleWeb3Connect = (result) => {
     if (result.success) {
-      // Simulate successful login redirect
-      setTimeout(() => router.push('/finance-tracker/dashboard'), 1000);
+      // Create mock user for wallet auth
+      const mockUser = {
+        name: 'Wallet User',
+        email: 'wallet@example.com',
+        provider: 'web3',
+        // Web3 users don't require 2FA for demo
+        twoFactorEnabled: false
+      };
+      
+      // Login with our auth system
+      const loginResult = loginWithCredentials(mockUser, 'web3-auth-token', null, true);
+      
+      // Redirect based on callback url or default
+      const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+      router.push(callbackUrl);
     }
   };
 
   const handleTwoFactorVerify = (result) => {
     if (result.success) {
-      // Simulate successful login redirect
-      setTimeout(() => router.push('/finance-tracker/dashboard'), 1000);
+      // Complete the authentication process using the auth context
+      const verificationSuccessful = handle2FAVerification(result);
+      
+      if (verificationSuccessful) {
+        // Redirect after successful 2FA
+        const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+        router.push(callbackUrl);
+      } else {
+        setAuthError('Failed to complete authentication after 2FA verification');
+        setShowTwoFactor(false);
+      }
     }
   };
 
   const handleBackFromTwoFactor = () => {
     setShowTwoFactor(false);
+    // Clear any pending login data when canceling 2FA
+    setPendingUser(null);
   };
 
   // Render 2FA verification if needed
@@ -213,6 +304,9 @@ export default function LoginPage() {
         <TwoFactorAuth 
           onVerify={handleTwoFactorVerify}
           onBack={handleBackFromTwoFactor}
+          email={pendingUser?.email || 'user@example.com'}
+          phone={pendingUser?.phone || '+1 (•••) •••-1234'}
+          methods={twoFactorMethods}
         />
       </AuthLayout>
     );
@@ -235,48 +329,45 @@ export default function LoginPage() {
           <SocialAuthButton 
             provider="google" 
             isLoading={isLoading.google}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
           
           <SocialAuthButton 
             provider="apple" 
             isLoading={isLoading.apple}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
           
           <SocialAuthButton 
             provider="azure" 
             isLoading={isLoading.azure}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
         </div>
         
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--card-border)]"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="px-3 bg-[var(--card-bg)] text-[var(--muted-foreground)] text-sm">
-              or continue with
-            </span>
-          </div>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-[#444]"></div>
+          <span className="text-sm text-gray-400">or</span>
+          <div className="flex-1 h-px bg-[#444]"></div>
         </div>
         
-        <PasskeyAuth onAuthenticate={handlePasskeyAuth} />
-        
-        <div className="mt-4">
+        <div className="space-y-3">
+          <PasskeyAuth onAuthenticate={handlePasskeyAuth} />
+          
           <Web3WalletAuth onConnect={handleWeb3Connect} />
         </div>
-      </div>
-      
-      <div className="mt-8 text-center text-[var(--muted-foreground)] text-sm">
-        Don't have an account?{' '}
-        <Link href="/auth/signup" className="text-[var(--primary)] hover:underline">
-          Sign up
-        </Link>
+        
+        <div className="pt-6 text-center">
+          <p className="text-sm text-gray-400">
+            Don't have an account?{' '}
+            <Link 
+              href="/auth/signup" 
+              className="text-[#50E3C2] hover:underline"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </AuthLayout>
   );

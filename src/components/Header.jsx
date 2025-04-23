@@ -15,15 +15,77 @@ import {
   FaSun,
   FaMoon,
   FaXmark,
-  FaBars
+  FaBars,
+  FaFileImport,
+  FaCircleInfo,
+  FaCircleCheck,
+  FaCircleXmark,
+  FaArrowRight,
+  FaKey,
+  FaCircleNotch
 } from 'react-icons/fa6';
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { 
+  generate2FASecret, 
+  verify2FACode, 
+  is2FAEnabled, 
+  set2FAStatus,
+  getRecoveryCodes,
+  generateRecoveryCodes
+} from '@/services/twoFactorAuthService';
+import RecoveryCodes from '@/components/auth/RecoveryCodes';
+import ProfileMenu from './header/ProfileMenu';
+import NotificationsMenu from './header/NotificationsMenu';
+import SearchPopup from './header/SearchPopup';
+import SettingsPopup from './header/SettingsPopup';
+import SecuritySettingsPopup from './header/SecuritySettingsPopup';
+
+// Settings tabs configuration for the popup
+const SettingsTabs = [
+  { 
+    name: 'Profile', 
+    href: '/settings/profile', 
+    icon: FaUser 
+  },
+  { 
+    name: 'Account', 
+    href: '/settings/account', 
+    icon: FaBriefcase 
+  },
+  { 
+    name: 'Security', 
+    href: '/settings/security', 
+    icon: FaShield 
+  },
+  { 
+    name: 'Notifications', 
+    href: '/settings/notifications', 
+    icon: FaBell 
+  },
+  { 
+    name: 'Messages', 
+    href: '/settings/messages', 
+    icon: FaMessage 
+  },
+  { 
+    name: 'Import Data', 
+    href: '/settings/import', 
+    icon: FaFileImport 
+  },
+];
 
 export default function Header() {
+  const { user, logout, isAuthenticated, updateUser } = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
   const [notifications, setNotifications] = useState(3);
   const [searchFocused, setSearchFocused] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const [isMobile, setIsMobile] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -35,6 +97,17 @@ export default function Header() {
   const searchInputRef = useRef(null);
   const searchPopupRef = useRef(null);
   const searchContainerRef = useRef(null);
+  const settingsRef = useRef(null);
+  
+  // Add state for security settings
+  const [showSecuritySettings, setShowSecuritySettings] = useState(false);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [showQRSetup, setShowQRSetup] = useState(false);
+  const [secret, setSecret] = useState(null);
+  const [status, setStatus] = useState('idle');
+  const [error, setError] = useState(null);
+  const [showRecoveryCodes, setShowRecoveryCodes] = useState(false);
+  const [recoveryCodes, setRecoveryCodes] = useState([]);
   
   // Handle window resize for responsive behavior
   useEffect(() => {
@@ -70,6 +143,10 @@ export default function Header() {
       if (searchPopupRef.current && !searchPopupRef.current.contains(event.target) && 
           !event.target.closest('[data-search-trigger="true"]')) {
         setSearchOpen(false);
+      }
+      if (settingsRef.current && !settingsRef.current.contains(event.target) && 
+          !event.target.closest('[data-settings-trigger="true"]')) {
+        setSettingsOpen(false);
       }
     };
 
@@ -339,6 +416,142 @@ export default function Header() {
     }
   }, [searchOpen]);
   
+  // Handle sign out
+  const handleSignOut = () => {
+    setProfileOpen(false);
+    logout();
+  };
+  
+  // Initialize 2FA status from user data
+  useEffect(() => {
+    if (user) {
+      setTwoFactorEnabled(is2FAEnabled(user));
+    }
+  }, [user]);
+  
+  // 2FA handlers
+  const handleEnable2FA = async () => {
+    try {
+      setStatus('loading');
+      
+      // Generate a new secret using the service
+      const newSecret = generate2FASecret();
+      setSecret(newSecret);
+      
+      // Show QR code setup
+      setShowQRSetup(true);
+      setStatus('idle');
+    } catch (error) {
+      setStatus('error');
+      setError('Failed to generate 2FA secret. Please try again.');
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    try {
+      setStatus('loading');
+      
+      // Call the service to disable 2FA
+      const success = await set2FAStatus(false, user?.id);
+      
+      if (success) {
+        // Update the user object in context
+        updateUser({
+          ...user,
+          twoFactorEnabled: false
+        });
+        
+        setTwoFactorEnabled(false);
+        setStatus('idle');
+      } else {
+        throw new Error('Failed to disable 2FA');
+      }
+    } catch (error) {
+      setStatus('error');
+      setError(error.message || 'Failed to disable 2FA. Please try again.');
+    }
+  };
+
+  const handleSetupComplete = async (result) => {
+    if (result.success) {
+      try {
+        // Call the service to enable 2FA
+        const success = await set2FAStatus(true, user?.id);
+        
+        if (success) {
+          // Update the user object in context
+          updateUser({
+            ...user,
+            twoFactorEnabled: true
+          });
+          
+          setTwoFactorEnabled(true);
+          setShowQRSetup(false);
+        } else {
+          setError('Failed to enable 2FA. Please try again.');
+        }
+      } catch (error) {
+        setError(error.message || 'Failed to enable 2FA. Please try again.');
+      }
+    }
+  };
+
+  const handleCancelSetup = () => {
+    setShowQRSetup(false);
+    setSecret(null);
+  };
+
+  const handleViewRecoveryCodes = async () => {
+    try {
+      setStatus('loading');
+      setError(null);
+      
+      // Retrieve recovery codes
+      const response = await getRecoveryCodes(user?.id);
+      
+      if (response.success) {
+        setRecoveryCodes(response.codes);
+        setShowRecoveryCodes(true);
+        setStatus('idle');
+      } else {
+        throw new Error(response.message || 'Failed to retrieve recovery codes');
+      }
+    } catch (error) {
+      console.error('Error retrieving recovery codes:', error);
+      setStatus('error');
+      setError(error.message || 'Failed to retrieve recovery codes. Please try again.');
+    }
+  };
+
+  const handleRegenerateRecoveryCodes = async () => {
+    try {
+      // Generate new recovery codes
+      const response = await generateRecoveryCodes(user?.id);
+      
+      if (response.success) {
+        setRecoveryCodes(response.codes);
+        return { success: true };
+      } else {
+        throw new Error(response.message || 'Failed to regenerate recovery codes');
+      }
+    } catch (error) {
+      console.error('Error regenerating recovery codes:', error);
+      return { 
+        success: false, 
+        message: error.message || 'Failed to regenerate recovery codes. Please try again.' 
+      };
+    }
+  };
+
+  const handleCloseRecoveryCodes = () => {
+    setShowRecoveryCodes(false);
+  };
+  
+  const openSecuritySettings = () => {
+    setSettingsOpen(false);
+    setShowSecuritySettings(true);
+  };
+  
   return (
     <>
       <header className="fixed top-4 right-4 left-4 md:left-[calc(64px+1rem)] md:right-4 md:top-4 mx-auto max-w-6xl rounded-2xl bg-[#0A0A0A]/60 header-glass z-[100] h-16 border border-[#222]/60 border-opacity-40 shadow-lg shadow-black/30">
@@ -366,6 +579,19 @@ export default function Header() {
             <button className="hidden md:flex items-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#50E3C2] to-[#3CCEA7] text-black font-medium text-sm button-hover">
               <FaPlus size={14} className="mr-2" />
               <span>Create</span>
+            </button>
+
+            <button
+              className={`header-button w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-[#50E3C2] ${settingsOpen ? 'text-[#50E3C2] border-[#50E3C2]/20' : ''}`}
+              title="Settings"
+              onClick={() => {
+                setProfileOpen(false);
+                setNotificationsOpen(false);
+                setSettingsOpen(!settingsOpen);
+              }}
+              data-settings-trigger="true"
+            >
+              <FaGear size={16} />
             </button>
             
             {/* Mobile search button */}
@@ -409,35 +635,8 @@ export default function Header() {
                 )}
               </button>
               
-              {/* Notification dropdown */}
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 notification-dropdown w-[calc(100vw-2rem)] sm:w-80 bg-[#121212]/90 backdrop-blur-md rounded-xl border border-[#222]/70 shadow-xl dropdown-animation z-50">
-                  <div className="px-4 py-3 border-b border-[#222]/70 flex items-center justify-between">
-                    <h3 className="font-medium text-white">Notifications</h3>
-                    <button className="text-xs text-[#50E3C2] hover:underline">Mark all as read</button>
-                  </div>
-                  
-                  <div className="mobile-dropdown">
-                    {notificationItems.map((item) => (
-                      <div key={item.id} className={`p-3 border-b border-[#1e1e1e]/70 last:border-0 hover:bg-[#1a1a1a]/70 transition-colors cursor-pointer ${!item.read ? 'bg-[#141414]/70' : ''}`}>
-                        <div className="flex items-start">
-                          <div className={`min-w-[8px] h-2 rounded-full mt-1.5 ${!item.read ? 'bg-[#50E3C2]' : 'bg-transparent'} mr-2 flex-shrink-0`}></div>
-                          <div className="w-full min-w-0">
-                            <div className="flex justify-between w-full">
-                              <h4 className="text-sm font-medium text-white">{item.title}</h4>
-                              <span className="text-xs text-gray-500 ml-2 whitespace-nowrap flex-shrink-0">{item.time}</span>
-                            </div>
-                            <p className="text-xs text-gray-400 mt-1 break-words w-full">{item.message}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="px-4 py-2 bg-[#0f0f0f]/70 text-center rounded-b-xl">
-                    <button className="text-sm text-[#50E3C2] hover:underline">View all notifications</button>
-                  </div>
-                </div>
+                <NotificationsMenu />
               )}
             </div>
             
@@ -451,7 +650,7 @@ export default function Header() {
                   <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-[#50E3C2]/20 to-[#3CCEA7]/20 backdrop-blur-md flex items-center justify-center border border-[#50E3C2]/20 hover:border-[#50E3C2]/40 transition-all duration-200 shadow-lg hover:shadow-[#50E3C2]/10">
                     <div className="w-full h-full rounded-xl overflow-hidden">
                       <img 
-                        src="https://ui-avatars.com/api/?name=P+O&background=50E3C2&color=000&bold=true" 
+                        src={user?.image || user?.avatar || "https://ui-avatars.com/api/?name=P+O&background=50E3C2&color=000&bold=true"} 
                         alt="User profile" 
                         className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-200"
                       />
@@ -466,59 +665,8 @@ export default function Header() {
                 )}
               </button>
               
-              {/* Profile dropdown menu */}
               {profileOpen && (
-                <div className="absolute right-0 mt-2 profile-dropdown w-[calc(100vw-2rem)] sm:w-64 bg-[#121212]/90 backdrop-blur-md rounded-xl border border-[#222]/70 shadow-xl dropdown-animation z-50">
-                  <div className="px-5 py-4 border-b border-[#222]/70">
-                    <div className="flex items-center">
-                      <div className="relative overflow-hidden">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#50E3C2]/20 to-[#3CCEA7]/20 flex items-center justify-center overflow-hidden border border-[#50E3C2]/20">
-                          <img 
-                            src="https://ui-avatars.com/api/?name=P+O&background=50E3C2&color=000&bold=true" 
-                            alt="User profile" 
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent"></div>
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="font-medium text-white">PIchOffith</h3>
-                        <div className="flex items-center mt-0.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#50E3C2] mr-1.5"></span>
-                          <p className="text-xs text-gray-400">Premium Plan</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="py-2 mobile-dropdown">
-                    <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
-                      <FaUser size={14} className="mr-3 text-gray-500" />
-                      Your Profile
-                    </button>
-                    <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
-                      <FaBriefcase size={14} className="mr-3 text-gray-500" />
-                      Account Settings
-                    </button>
-                    <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
-                      <FaMessage size={14} className="mr-3 text-gray-500" />
-                      Messages
-                    </button>
-                    <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
-                      <FaShield size={14} className="mr-3 text-gray-500" />
-                      Privacy & Security
-                    </button>
-                  </div>
-                  
-                  <div className="header-divider"></div>
-                  
-                  <div className="py-2">
-                    <button className="w-full flex items-center px-4 py-2.5 text-sm text-red-400 hover:bg-[#1a1a1a] transition-colors">
-                      <FaRightFromBracket size={14} className="mr-3" />
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
+                <ProfileMenu user={user} onSignOut={handleSignOut} />
               )}
             </div>
             
@@ -538,140 +686,162 @@ export default function Header() {
       
       {/* Search Popup */}
       {searchOpen && (
-        <div className="search-popup-container" ref={searchContainerRef}>
-          <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm search-backdrop"
-            onClick={() => setSearchOpen(false)}
-          ></div>
-          <div 
-            ref={searchPopupRef}
-            className="search-popup bg-[#121212]/90 backdrop-blur-md border border-[#222]/70 shadow-2xl search-popup-animation"
-          >
-            <div className="flex items-center p-3 md:p-4 border-b border-[#222]/70">
-              <FaMagnifyingGlass className="text-[#50E3C2] mr-2 md:mr-3" size={16} />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search for anything..."
-                className="flex-1 bg-transparent border-none text-base text-gray-200 placeholder-gray-500 focus:outline-none"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                autoFocus
-              />
-              <button 
-                onClick={() => setSearchOpen(false)}
-                className="text-gray-400 hover:text-white p-1 transition-colors duration-200"
-              >
-                <FaXmark size={16} />
-              </button>
+        <SearchPopup 
+          onClose={() => setSearchOpen(false)} 
+          containerRef={searchContainerRef} 
+        />
+      )}
+      
+      {/* Settings Popup */}
+      {settingsOpen && (
+        <SettingsPopup 
+          onClose={() => setSettingsOpen(false)} 
+          containerRef={settingsRef}
+          tabs={SettingsTabs}
+          onOpenSecuritySettings={openSecuritySettings}
+        />
+      )}
+      
+      {/* Security Settings Modal */}
+      {showSecuritySettings && (
+        <SecuritySettingsPopup
+          onClose={() => setShowSecuritySettings(false)}
+        />
+      )}
+    </>
+  );
+}
+
+// QR Code setup component for 2FA
+function QRCodeSetup({ secret, onComplete, onCancel }) {
+  const [verificationCode, setVerificationCode] = useState('');
+  const [status, setStatus] = useState('idle');
+  const [error, setError] = useState(null);
+
+  const handleVerify = async () => {
+    try {
+      setStatus('verifying');
+      
+      // Use the service to verify the code
+      const isValid = await verify2FACode(verificationCode, secret.secret);
+      
+      if (isValid) {
+        setStatus('success');
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete({
+              success: true,
+              secret: secret.secret
+            });
+          }
+        }, 1000);
+      } else {
+        throw new Error('Invalid verification code. Please try again.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setError(error.message || 'Verification failed. Please try again.');
+    }
+  };
+
+  return (
+    <div className="p-6 bg-[#121212] rounded-xl border border-[#222] mb-6">
+      <h3 className="text-lg font-medium text-white mb-4">Setup Two-Factor Authentication</h3>
+      
+      <div className="mb-6">
+        <p className="text-gray-400 mb-3">
+          Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-6">
+          <div className="bg-white p-3 rounded-lg w-48 h-48 flex-shrink-0">
+            <img 
+              src={secret.qrCodeUrl} 
+              alt="QR Code for 2FA" 
+              className="w-full h-full"
+            />
+          </div>
+          
+          <div>
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-1">Manual setup code:</p>
+              <div className="bg-[#1a1a1a] p-3 rounded-lg font-mono text-sm break-all border border-[#333]">
+                {secret.secret}
+              </div>
             </div>
             
-            <div className="overflow-control p-3 md:p-4" style={{ maxHeight: 'calc(80vh - 120px)' }}>
-              {!searchQuery.trim() ? (
-                <div className="text-center py-8 md:py-10">
-                  <div className="text-[#50E3C2] mb-3 opacity-60">
-                    <FaMagnifyingGlass size={24} className="mx-auto md:h-7 md:w-7" />
-                  </div>
-                  <div className="text-gray-300 font-medium mb-2">Start typing to search</div>
-                  <div className="text-xs text-gray-500">Search for pages, campaigns, users, and more</div>
-                </div>
-              ) : !searchResults ? (
-                <div className="text-center py-8 md:py-10">
-                  <div className="text-gray-500 mb-2">No results found</div>
-                  <div className="text-xs text-gray-600">Try different keywords or check spelling</div>
-                </div>
-              ) : (
-                <div className="space-y-5 md:space-y-6">
-                  {/* Pages */}
-                  {searchResults.pages.length > 0 && (
-                    <div>
-                      <h3 className="search-category">Pages</h3>
-                      <div className="space-y-1">
-                        {searchResults.pages.map(item => (
-                          <div key={item.id} className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-150 search-result-hover">
-                            <div className="mr-3 text-xl">{item.icon}</div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm text-white truncate">{item.title}</div>
-                            </div>
-                            <div className="text-gray-500 ml-2">
-                              <FaChevronDown size={12} className="rotate-270" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Campaigns */}
-                  {searchResults.campaigns.length > 0 && (
-                    <div>
-                      <h3 className="search-category">Campaigns</h3>
-                      <div className="space-y-1">
-                        {searchResults.campaigns.map(item => (
-                          <div key={item.id} className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-150 search-result-hover">
-                            <div className="mr-3 text-xl">{item.icon}</div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm text-white truncate">{item.title}</div>
-                            </div>
-                            <div className="text-gray-500 ml-2">
-                              <FaChevronDown size={12} className="rotate-270" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* People */}
-                  {searchResults.users.length > 0 && (
-                    <div>
-                      <h3 className="search-category">People</h3>
-                      <div className="space-y-1">
-                        {searchResults.users.map(item => (
-                          <div key={item.id} className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-150 search-result-hover">
-                            <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
-                              <img src={item.avatar} alt={item.title} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm text-white truncate">{item.title}</div>
-                              <div className="text-xs text-gray-500 truncate">{item.subtitle}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Documentation */}
-                  {searchResults.docs.length > 0 && (
-                    <div>
-                      <h3 className="search-category">Documentation</h3>
-                      <div className="space-y-1">
-                        {searchResults.docs.map(item => (
-                          <div key={item.id} className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-150 search-result-hover">
-                            <div className="mr-3 text-xl">{item.icon}</div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm text-white truncate">{item.title}</div>
-                            </div>
-                            <div className="text-gray-500 ml-2">
-                              <FaChevronDown size={12} className="rotate-270" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            <div className="p-2 md:p-3 border-t border-[#222]/70 text-xs text-gray-500 flex flex-col xs:flex-row justify-between space-y-2 xs:space-y-0">
-              <div>Press <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">↑</kbd> <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">↓</kbd> to navigate</div>
-              <div>Press <kbd className="px-2 py-1 bg-[#222]/70 rounded text-gray-400 text-[10px]">Enter</kbd> to select</div>
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-1">Recovery code (save this somewhere safe):</p>
+              <div className="bg-[#1a1a1a] p-3 rounded-lg font-mono text-sm break-all border border-[#333] text-yellow-500">
+                {secret.recoveryCode}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      
+      <div className="mb-4">
+        <label className="block text-gray-300 mb-2">Enter the 6-digit verification code:</label>
+        <input
+          type="text"
+          value={verificationCode}
+          onChange={(e) => {
+            setVerificationCode(e.target.value);
+            if (status === 'error') {
+              setError(null);
+              setStatus('idle');
+            }
+          }}
+          maxLength={6}
+          className="w-full sm:w-64 p-3 rounded-lg bg-[#1a1a1a] border border-[#333] text-white focus:border-[#50E3C2] focus:outline-none"
+          placeholder="000000"
+        />
+      </div>
+      
+      {error && (
+        <div className="mb-4 p-3 bg-red-500/10 rounded-lg flex items-start gap-2 text-red-400 text-sm">
+          <FaCircleInfo className="mt-0.5 flex-shrink-0" />
+          <p>{error}</p>
+        </div>
       )}
-    </>
+      
+      <div className="flex items-center gap-3 justify-end">
+        <button
+          onClick={onCancel}
+          className="py-2 px-4 rounded-lg bg-[#2a2a2a] text-gray-300 hover:bg-[#333] transition-colors"
+        >
+          Cancel
+        </button>
+        
+        <button
+          onClick={handleVerify}
+          disabled={verificationCode.length !== 6 || status === 'verifying' || status === 'success'}
+          className={`flex items-center gap-2 py-2 px-4 rounded-lg ${
+            status === 'success'
+              ? 'bg-[#008751] text-white'
+              : 'bg-gradient-to-r from-[#50E3C2] to-[#3CCEA7] text-black font-medium'
+          } ${
+            (verificationCode.length !== 6 || status === 'verifying') ? 'opacity-70' : ''
+          } transition-all duration-200`}
+        >
+          {status === 'success' ? (
+            <>
+              <FaCircleCheck />
+              <span>Verified</span>
+            </>
+          ) : status === 'verifying' ? (
+            <>
+              <FaCircleNotch className="animate-spin" />
+              <span>Verifying...</span>
+            </>
+          ) : (
+            <>
+              <span>Verify</span>
+              <FaArrowRight size={12} />
+            </>
+          )}
+        </button>
+      </div>
+    </div>
   );
 } 

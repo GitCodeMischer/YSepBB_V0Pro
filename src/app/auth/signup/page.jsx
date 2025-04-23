@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AuthLayout from '@/components/auth/AuthLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   FaCircleInfo, 
   FaUser, 
@@ -19,8 +20,10 @@ import {
   FaWallet
 } from 'react-icons/fa6';
 
-// Reusable components for signup page
-function SocialAuthButton({ provider, isLoading, onSuccess, onError }) {
+// Integrated Social Auth Button that uses our AuthContext
+function SocialAuthButton({ provider, isLoading, setIsLoading }) {
+  const { loginWithProvider } = useAuth();
+  
   const providerConfig = {
     google: {
       name: 'Google',
@@ -44,14 +47,15 @@ function SocialAuthButton({ provider, isLoading, onSuccess, onError }) {
   }
   
   const handleSignIn = async () => {
-    // Mock authentication
-    setTimeout(() => {
-      if (Math.random() > 0.1) { // 90% success rate
-        onSuccess({ user: { name: 'Demo User', email: 'user@example.com' } });
-      } else {
-        onError('Authentication failed');
-      }
-    }, 1500);
+    try {
+      setIsLoading(prevState => ({ ...prevState, [provider]: true }));
+      // Use the callbackUrl to indicate this is a signup
+      await loginWithProvider(provider);
+      // Redirect is handled by NextAuth
+    } catch (error) {
+      console.error(`${provider} sign-in error:`, error);
+      setIsLoading(prevState => ({ ...prevState, [provider]: false }));
+    }
   };
   
   return (
@@ -162,6 +166,9 @@ function Web3WalletAuth({ onConnect }) {
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, loginWithCredentials } = useAuth();
+  
   const [isLoading, setIsLoading] = useState({
     google: false,
     apple: false,
@@ -178,6 +185,14 @@ export default function SignupPage() {
   const [formErrors, setFormErrors] = useState({});
   const [signupStep, setSignupStep] = useState('method'); // method, form, success
   const [signupMethod, setSignupMethod] = useState(null);
+
+  // Handle redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+      router.push(callbackUrl);
+    }
+  }, [isAuthenticated, router, searchParams]);
 
   const handleSocialSuccess = (result) => {
     setSignupMethod('social');
@@ -198,19 +213,49 @@ export default function SignupPage() {
 
   const handlePasskeyAuth = (result) => {
     if (result.success) {
+      // Create mock user for passkey auth
+      const mockUser = {
+        name: 'New Passkey User',
+        email: 'new-passkey@example.com',
+        provider: 'passkey'
+      };
+      
+      // Login with our auth system
+      loginWithCredentials(mockUser, 'passkey-signup-token', null, true);
+      
+      // Show success or redirect
       setSignupMethod('passkey');
       setSignupStep('success');
-      // Simulate redirect after success
-      setTimeout(() => router.push('/dashboard'), 2000);
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+        router.push(callbackUrl);
+      }, 2000);
     }
   };
 
   const handleWeb3Connect = (result) => {
     if (result.success) {
-      setSignupMethod('web3wallet');
+      // Create mock user for wallet auth
+      const mockUser = {
+        name: 'New Web3 User',
+        email: 'new-wallet@example.com',
+        provider: 'web3'
+      };
+      
+      // Login with our auth system
+      loginWithCredentials(mockUser, 'web3-signup-token', null, true);
+      
+      // Show success or redirect
+      setSignupMethod('web3');
       setSignupStep('success');
-      // Simulate redirect after success
-      setTimeout(() => router.push('/dashboard'), 2000);
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+        router.push(callbackUrl);
+      }, 2000);
     }
   };
 
@@ -221,23 +266,19 @@ export default function SignupPage() {
       [name]: value
     });
     
-    // Clear error for this field
+    // Clear error when user types
     if (formErrors[name]) {
       setFormErrors({
         ...formErrors,
-        [name]: null
+        [name]: ''
       });
     }
   };
-
+  
   const validateForm = () => {
     const errors = {};
-    
-    if (!formValues.name.trim()) {
-      errors.name = 'Name is required';
-    }
-    
-    if (!formValues.email.trim()) {
+    if (!formValues.name) errors.name = 'Name is required';
+    if (!formValues.email) {
       errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
       errors.email = 'Email is invalid';
@@ -249,91 +290,90 @@ export default function SignupPage() {
       errors.password = 'Password must be at least 8 characters';
     }
     
-    if (formValues.password !== formValues.confirmPassword) {
+    if (formValues.confirmPassword !== formValues.password) {
       errors.confirmPassword = 'Passwords do not match';
     }
     
-    return errors;
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
-
+  
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
+    if (!validateForm()) {
       return;
     }
     
+    setIsLoading(prev => ({...prev, form: true}));
+    
     try {
-      setIsLoading({ ...isLoading, form: true });
+      // Create user from form
+      const newUser = {
+        name: formValues.name,
+        email: formValues.email,
+        provider: 'credentials'
+      };
       
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Login with credentials
+      loginWithCredentials(newUser, 'form-signup-token', null, true);
       
-      setSignupMethod('email');
+      // Show success
+      setSignupMethod('form');
       setSignupStep('success');
       
-      // Simulate redirect after success
-      setTimeout(() => router.push('/dashboard'), 2000);
+      // Redirect after a short delay
+      setTimeout(() => {
+        const callbackUrl = searchParams.get('callbackUrl') || '/finance-tracker/dashboard';
+        router.push(callbackUrl);
+      }, 2000);
     } catch (error) {
-      setAuthError(error.message || 'Sign up failed. Please try again.');
+      setAuthError('Signup failed. Please try again.');
     } finally {
-      setIsLoading({ ...isLoading, form: false });
+      setIsLoading(prev => ({...prev, form: false}));
     }
   };
-
+  
   const showEmailSignupForm = () => {
+    setSignupMethod('email');
     setSignupStep('form');
-    setAuthError(null);
   };
-
+  
   const getSuccessMessage = () => {
-    switch (signupMethod) {
-      case 'social':
-        return 'Your account has been created successfully with social login.';
-      case 'passkey':
-        return 'Your account has been created and your passkey registered.';
-      case 'web3wallet':
-        return 'Your Web3 wallet has been connected and your account created.';
-      case 'email':
-        return 'Your account has been created successfully. Please verify your email.';
-      default:
-        return 'Your account has been created successfully.';
-    }
+    const messages = {
+      social: 'Account created successfully with social login',
+      email: 'Account created successfully with email',
+      passkey: 'Account created successfully with passkey',
+      web3: 'Account created successfully with Web3 wallet'
+    };
+    
+    return messages[signupMethod] || 'Account created successfully';
   };
-
-  // Render success screen
+  
+  // Show success screen
   if (signupStep === 'success') {
     return (
       <AuthLayout>
-        <div className="text-center">
-          <div className="w-16 h-16 bg-[var(--success)] bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FaCircleCheck className="text-[var(--success)] text-3xl" />
+        <div className="text-center py-10">
+          <div className="mb-5 inline-flex rounded-full p-4 bg-[var(--success)] bg-opacity-10">
+            <FaCircleCheck size={32} className="text-[var(--success)]" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Account Created!</h2>
-          <p className="text-[var(--muted-foreground)] mb-6">
-            {getSuccessMessage()}
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-2xl lime-btn"
-          >
-            <span>Go to Dashboard</span>
-            <FaArrowRight />
-          </Link>
+          
+          <h2 className="text-2xl font-medium text-white mb-2">Success!</h2>
+          <p className="text-gray-400 mb-8">{getSuccessMessage()}</p>
+          
+          <p className="text-sm text-gray-500 animate-pulse">Redirecting to dashboard...</p>
         </div>
       </AuthLayout>
     );
   }
-
-  // Render email signup form
+  
+  // Show email signup form
   if (signupStep === 'form') {
     return (
       <AuthLayout 
         title="Create your account"
-        subtitle="Fill in your details to get started"
-        goBackLink={{ href: '/auth/signup', label: 'Back to sign up methods' }}
+        subtitle="Enter your information to sign up"
       >
         {authError && (
           <div className="mb-6 p-3 bg-[var(--danger)] bg-opacity-20 border border-[var(--danger)] text-white rounded-xl flex items-start gap-3">
@@ -343,119 +383,110 @@ export default function SignupPage() {
         )}
         
         <form onSubmit={handleFormSubmit} className="space-y-4">
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <FaUser className="text-[var(--muted-foreground)]" />
-              </div>
+          <div className="space-y-1">
+            <label htmlFor="name" className="text-sm text-gray-300">Full Name</label>
+            <div className={`flex items-center p-3 rounded-xl ${formErrors.name ? 'bg-[var(--danger)] bg-opacity-10 border border-[var(--danger)]' : 'bg-[#1a1a1a] border border-[#333]'}`}>
+              <FaUser className="text-gray-500 mr-2" />
               <input
                 type="text"
+                id="name"
                 name="name"
-                placeholder="Full Name"
+                placeholder="John Doe"
                 value={formValues.name}
                 onChange={handleFormInputChange}
-                className="glass-input pl-10 w-full"
-                disabled={isLoading.form}
+                className="w-full bg-transparent border-none focus:outline-none text-white"
               />
             </div>
-            {formErrors.name && (
-              <p className="text-[var(--danger)] text-sm mt-1">{formErrors.name}</p>
-            )}
+            {formErrors.name && <p className="text-xs text-[var(--danger)]">{formErrors.name}</p>}
           </div>
           
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <FaEnvelope className="text-[var(--muted-foreground)]" />
-              </div>
+          <div className="space-y-1">
+            <label htmlFor="email" className="text-sm text-gray-300">Email Address</label>
+            <div className={`flex items-center p-3 rounded-xl ${formErrors.email ? 'bg-[var(--danger)] bg-opacity-10 border border-[var(--danger)]' : 'bg-[#1a1a1a] border border-[#333]'}`}>
+              <FaEnvelope className="text-gray-500 mr-2" />
               <input
                 type="email"
+                id="email"
                 name="email"
-                placeholder="Email Address"
+                placeholder="you@example.com"
                 value={formValues.email}
                 onChange={handleFormInputChange}
-                className="glass-input pl-10 w-full"
-                disabled={isLoading.form}
+                className="w-full bg-transparent border-none focus:outline-none text-white"
               />
             </div>
-            {formErrors.email && (
-              <p className="text-[var(--danger)] text-sm mt-1">{formErrors.email}</p>
-            )}
+            {formErrors.email && <p className="text-xs text-[var(--danger)]">{formErrors.email}</p>}
           </div>
           
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <FaLock className="text-[var(--muted-foreground)]" />
-              </div>
+          <div className="space-y-1">
+            <label htmlFor="password" className="text-sm text-gray-300">Password</label>
+            <div className={`flex items-center p-3 rounded-xl ${formErrors.password ? 'bg-[var(--danger)] bg-opacity-10 border border-[var(--danger)]' : 'bg-[#1a1a1a] border border-[#333]'}`}>
+              <FaLock className="text-gray-500 mr-2" />
               <input
                 type="password"
+                id="password"
                 name="password"
-                placeholder="Password"
+                placeholder="********"
                 value={formValues.password}
                 onChange={handleFormInputChange}
-                className="glass-input pl-10 w-full"
-                disabled={isLoading.form}
+                className="w-full bg-transparent border-none focus:outline-none text-white"
               />
             </div>
-            {formErrors.password && (
-              <p className="text-[var(--danger)] text-sm mt-1">{formErrors.password}</p>
-            )}
+            {formErrors.password && <p className="text-xs text-[var(--danger)]">{formErrors.password}</p>}
           </div>
           
-          <div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <FaLock className="text-[var(--muted-foreground)]" />
-              </div>
+          <div className="space-y-1">
+            <label htmlFor="confirmPassword" className="text-sm text-gray-300">Confirm Password</label>
+            <div className={`flex items-center p-3 rounded-xl ${formErrors.confirmPassword ? 'bg-[var(--danger)] bg-opacity-10 border border-[var(--danger)]' : 'bg-[#1a1a1a] border border-[#333]'}`}>
+              <FaLock className="text-gray-500 mr-2" />
               <input
                 type="password"
+                id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Confirm Password"
+                placeholder="********"
                 value={formValues.confirmPassword}
                 onChange={handleFormInputChange}
-                className="glass-input pl-10 w-full"
-                disabled={isLoading.form}
+                className="w-full bg-transparent border-none focus:outline-none text-white"
               />
             </div>
-            {formErrors.confirmPassword && (
-              <p className="text-[var(--danger)] text-sm mt-1">{formErrors.confirmPassword}</p>
-            )}
+            {formErrors.confirmPassword && <p className="text-xs text-[var(--danger)]">{formErrors.confirmPassword}</p>}
           </div>
           
           <button
             type="submit"
             disabled={isLoading.form}
-            className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl lime-btn ${
-              isLoading.form ? 'opacity-70' : ''
-            }`}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#50E3C2] to-[#3CCEA7] text-black font-medium mt-6 flex items-center justify-center"
           >
             {isLoading.form ? (
-              <span>Creating account...</span>
+              <FaCircleNotch className="animate-spin" />
             ) : (
               <>
-                <span>Create Account</span>
-                <FaArrowRight />
+                Create Account
+                <FaArrowRight className="ml-2" />
               </>
             )}
           </button>
+          
+          <div className="text-center mt-6">
+            <p className="text-sm text-gray-400">
+              Already have an account?{' '}
+              <Link
+                href="/auth/login"
+                className="text-[#50E3C2] hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
         </form>
-        
-        <div className="mt-8 text-center text-[var(--muted-foreground)] text-sm">
-          Already have an account?{' '}
-          <Link href="/auth/login" className="text-[var(--primary)] hover:underline">
-            Sign in
-          </Link>
-        </div>
       </AuthLayout>
     );
   }
-
-  // Render signup methods
+  
+  // Show signup method selection (default)
   return (
     <AuthLayout 
-      title="Create an account"
-      subtitle="Choose how you want to sign up"
+      title="Create your account"
+      subtitle="Choose your preferred signup method"
     >
       {authError && (
         <div className="mb-6 p-3 bg-[var(--danger)] bg-opacity-20 border border-[var(--danger)] text-white rounded-xl flex items-start gap-3">
@@ -469,58 +500,56 @@ export default function SignupPage() {
           <SocialAuthButton 
             provider="google" 
             isLoading={isLoading.google}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
           
           <SocialAuthButton 
             provider="apple" 
             isLoading={isLoading.apple}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
           
           <SocialAuthButton 
             provider="azure" 
             isLoading={isLoading.azure}
-            onSuccess={handleSocialSuccess}
-            onError={handleSocialError}
+            setIsLoading={setIsLoading}
           />
         </div>
         
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[var(--card-border)]"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="px-3 bg-[var(--card-bg)] text-[var(--muted-foreground)] text-sm">
-              or continue with
-            </span>
-          </div>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-[#444]"></div>
+          <span className="text-sm text-gray-400">or</span>
+          <div className="flex-1 h-px bg-[#444]"></div>
         </div>
         
-        <PasskeyAuth onAuthenticate={handlePasskeyAuth} mode="register" />
-        
-        <div className="mt-4">
+        <div className="space-y-3">
+          <button
+            onClick={showEmailSignupForm}
+            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#50E3C2] to-[#3CCEA7] text-black font-medium flex items-center justify-center"
+          >
+            <FaEnvelope className="mr-2" />
+            Sign up with Email
+          </button>
+          
+          <PasskeyAuth 
+            onAuthenticate={handlePasskeyAuth}
+            mode="register"
+          />
+          
           <Web3WalletAuth onConnect={handleWeb3Connect} />
         </div>
         
-        <div className="mt-4">
-          <button
-            onClick={showEmailSignupForm}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-2xl transition-all duration-300 glass-button"
-          >
-            <FaEnvelope className="text-xl" />
-            <span>Sign up with Email</span>
-          </button>
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-400">
+            Already have an account?{' '}
+            <Link
+              href="/auth/login"
+              className="text-[#50E3C2] hover:underline"
+            >
+              Sign in
+            </Link>
+          </p>
         </div>
-      </div>
-      
-      <div className="mt-8 text-center text-[var(--muted-foreground)] text-sm">
-        Already have an account?{' '}
-        <Link href="/auth/login" className="text-[var(--primary)] hover:underline">
-          Sign in
-        </Link>
       </div>
     </AuthLayout>
   );

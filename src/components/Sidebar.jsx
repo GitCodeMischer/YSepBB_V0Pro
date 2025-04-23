@@ -19,7 +19,13 @@ import {
   FaServer,
   FaChartLine,
   FaUsers,
-  FaShuffle
+  FaShuffle,
+  FaUser,
+  FaBriefcase,
+  FaShield,
+  FaBell,
+  FaMessage,
+  FaFileImport
 } from 'react-icons/fa6';
 
 export default function Sidebar() {
@@ -403,12 +409,6 @@ export default function Sidebar() {
         { id: 'planned-payments-stats', label: 'Planned Payments Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/planned-payments-stats' },
         { id: 'subscriptions-stats', label: 'Subscriptions Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/subscriptions-stats' }
       ]
-    },
-    { 
-      id: 'settings', 
-      icon: <FaGear size={18} />, 
-      label: 'Settings',
-      subItems: []
     }
   ];
   
