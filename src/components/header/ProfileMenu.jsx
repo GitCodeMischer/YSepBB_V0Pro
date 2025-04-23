@@ -51,22 +51,22 @@ export default function ProfileMenu({ user, onSignOut }) {
           <FaBriefcase size={14} className="mr-3 text-gray-500" />
           Account Settings
         </Link>
-        <Link href="/settings/notifications" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
+        {/* <Link href="/settings/notifications" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
           <FaBell size={14} className="mr-3 text-gray-500" />
           Notifications
         </Link>
         <Link href="/settings/messages" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
           <FaMessage size={14} className="mr-3 text-gray-500" />
           Messages
-        </Link>
-        <Link href="/settings/security" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
+        </Link> */}
+        {/* <Link href="/settings/security" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
           <FaShield size={14} className="mr-3 text-gray-500" />
           Privacy & Security
-        </Link>
-        <Link href="/settings/import" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
+        </Link> */}
+        {/* <Link href="/settings/import" className="w-full flex items-center px-4 py-2.5 text-sm text-gray-300 hover:bg-[#1a1a1a] hover:text-white transition-colors">
           <FaFileImport size={14} className="mr-3 text-gray-500" />
           Import Data
-        </Link>
+        </Link> */}
       </div>
       
       <div className="header-divider"></div>
