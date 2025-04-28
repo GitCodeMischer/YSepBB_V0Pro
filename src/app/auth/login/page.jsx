@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AuthLayout from '@/components/auth/AuthLayout';
@@ -163,7 +163,7 @@ function Web3WalletAuth({ onConnect }) {
   );
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { 
@@ -235,7 +235,7 @@ export default function LoginPage() {
         email: 'passkey@example.com',
         provider: 'passkey',
         // 50% chance of requiring 2FA for demo purposes
-        twoFactorEnabled: Math.random() > 0.5
+        twoFactorEnabled: process.env.NODE_ENV === 'development' ? true : Math.random() > 0.5
       };
       
       // Login with our auth system
@@ -370,5 +370,15 @@ export default function LoginPage() {
         </div>
       </div>
     </AuthLayout>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>}>
+      <LoginContent />
+    </Suspense>
   );
 } 

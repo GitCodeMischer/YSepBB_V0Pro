@@ -27,11 +27,12 @@ import {
   FaMessage,
   FaFileImport
 } from 'react-icons/fa6';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [windowWidth, setWindowWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -44,63 +45,125 @@ export default function Sidebar() {
   const sidebarRef = useRef(null);
   const submenuTimerRef = useRef(null);
   
+  const pathname = usePathname();
+  const router = useRouter();
+  
+  // Define menuItems before it's used in useEffect
+  const menuItems = [
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      path: '/finance-tracker/dashboard',
+      icon: <FaHouse size={16} />,
+      subItems: []
+    },
+    { 
+      id: 'quick-overview', 
+      icon: <FaChartPie size={18} />, 
+      label: 'Quick Overview',
+      subItems: [
+        { id: 'account-balances', label: 'Account Balances', icon: <FaWallet size={14} />, path: '/finance-tracker/quick-overview/account-balances' },
+        { id: 'budget-overview', label: 'Budget Overview', icon: <FaChartLine size={14} />, path: '/finance-tracker/quick-overview/budget-overview' },
+        { id: 'recent-transactions', label: 'Recent Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/quick-overview/recent-transactions' },
+        { id: 'spending-by-category', label: 'Spending by Category', icon: <FaTableColumns size={14} />, path: '/finance-tracker/quick-overview/spending-by-category' },
+        { id: 'total-spending', label: 'Total Spending', icon: <FaChartPie size={14} />, path: '/finance-tracker/quick-overview/total-spending' }
+      ]
+    },
+    { 
+      id: 'cashflow', 
+      icon: <FaRegNoteSticky size={18} />, 
+      label: 'Cashflow',
+      subItems: [
+        { id: 'income', label: 'Income', icon: <FaChartLine size={14} />, path: '/finance-tracker/cashflow/income' },
+        { id: 'expenses', label: 'Expenses', icon: <FaWallet size={14} />, path: '/finance-tracker/cashflow/expenses' }
+      ]
+    },
+    { 
+      id: 'transactions', 
+      icon: <FaTableColumns size={18} />, 
+      label: 'Transactions',
+      subItems: [
+        { id: 'all', label: 'All Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/transactions/all' },
+        { id: 'loop', label: 'Loop Transactions', icon: <FaShuffle size={14} />, path: '/finance-tracker/transactions/loop-transactions' }
+      ]
+    },
+    { 
+      id: 'planning', 
+      icon: <FaChartLine size={18} />, 
+      label: 'Planning & Subscriptions',
+      subItems: [
+        { id: 'budget-plan', label: 'Budget Plan', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/planning-and-subscriptions/budget-plan' },
+        { id: 'planned-payments', label: 'Planned Payments', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/planned-payments' },
+        { id: 'subscriptions', label: 'Subscriptions', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/subscriptions' }
+      ]
+    },
+    { 
+      id: 'portfolio', 
+      icon: <FaWallet size={18} />, 
+      label: 'Portfolio',
+      subItems: [
+        { id: 'accounts', label: 'Accounts', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/accounts' },
+        { id: 'crypto', label: 'Crypto', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/crypto' },
+        { id: 'stocks', label: 'Stocks & Funds', icon: <FaChartLine size={14} />, path: '/finance-tracker/portfolio/stocks-and-funds' }
+      ]
+    },
+    { 
+      id: 'statistics', 
+      icon: <FaChartPie size={18} />, 
+      label: 'Statistics',
+      subItems: [
+        { id: 'ai-optimization', label: 'AI Optimization', icon: <FaRobot size={14} />, path: '/finance-tracker/statistics/ai-optimization' },
+        { id: 'budget-plan-stats', label: 'Budget Plan Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/budget-plan-stats' },
+        { id: 'planned-payments-stats', label: 'Planned Payments Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/planned-payments-stats' },
+        { id: 'subscriptions-stats', label: 'Subscriptions Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/subscriptions-stats' }
+      ]
+    }
+  ];
+  
+  const favoriteItems = [
+    { id: 'design-project', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'Design Project' },
+    { id: 'seo-automation', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'SEO Automation' },
+    { id: 'email-marketing', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'Email Marketing' }
+  ];
+  
   // Detect current route and set active menu
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const pathname = window.location.pathname;
+    // Find which menu item is active based on pathname
+    const activeItem = menuItems.find(item => 
+      item.path === pathname || 
+      item.subItems.some(subItem => pathname?.includes(subItem.path))
+    );
+    
+    if (activeItem) {
+      setActiveMenu(activeItem.id);
       
-      // Find the matching menu and submenu from the current path
-      for (const menu of menuItems) {
-        // Check if path is in this menu's route
-        if (menu.path && pathname === menu.path) {
-          setActiveMenu(menu.id);
-          break;
-        }
-        
-        // Check subItems
-        if (menu.subItems && menu.subItems.length > 0) {
-          const matchingSubItem = menu.subItems.find(subItem => 
-            subItem.path && pathname.includes(subItem.path)
-          );
-          
-          if (matchingSubItem) {
-            setActiveMenu(menu.id);
-            setOpenSubmenu(menu.id);
-            break;
-          }
-        }
+      // If the active item has subItems and one of them matches the path,
+      // open the submenu
+      if (activeItem.subItems.length > 0 && 
+          activeItem.subItems.some(subItem => pathname?.includes(subItem.path))) {
+        setOpenSubmenu(activeItem.id);
       }
+    } else {
+      setActiveMenu(null);
     }
-  }, []);
+  }, [pathname, menuItems]);
   
   // Add a useEffect to update activeMenu when URL changes
   useEffect(() => {
     const handleRouteChange = () => {
-      const pathname = window.location.pathname;
+      // No need to redefine pathname here since we're using usePathname()
+      // which already gives us the current path
       
-      // Find the matching menu and submenu from the current path
-      let found = false;
-      for (const menu of menuItems) {
-        // Check if path is in this menu's route
-        if (menu.path && pathname === menu.path) {
-          setActiveMenu(menu.id);
-          found = true;
-          break;
-        }
-        
-        // Check subItems
-        if (menu.subItems && menu.subItems.length > 0) {
-          const matchingSubItem = menu.subItems.find(subItem => 
-            subItem.path && pathname.includes(subItem.path)
-          );
-          
-          if (matchingSubItem) {
-            setActiveMenu(menu.id);
-            setOpenSubmenu(menu.id);
-            found = true;
-            break;
-          }
-        }
+      // Find which menu item is active based on pathname
+      const activeItem = menuItems.find(item => 
+        item.path === pathname || 
+        item.subItems.some(subItem => pathname?.includes(subItem.path))
+      );
+      
+      if (activeItem) {
+        setActiveMenu(activeItem.id);
+      } else {
+        setActiveMenu(null);
       }
     };
     
@@ -113,7 +176,7 @@ export default function Sidebar() {
     return () => {
       window.removeEventListener('popstate', handleRouteChange);
     };
-  }, []);
+  }, [pathname, menuItems]);
   
   // Handle window resize for responsive behavior
   useEffect(() => {
@@ -129,8 +192,13 @@ export default function Sidebar() {
       }
     };
 
-    handleResize(); // Initial check
+    // Call immediately on mount
+    handleResize();
+    
+    // Add resize listener
     window.addEventListener('resize', handleResize);
+    
+    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
@@ -334,89 +402,9 @@ export default function Sidebar() {
   
   // Function to handle navigation
   const handleNavigation = (path) => {
-    // In a real application, you would use a router to navigate
-    // For example with react-router: navigate(path)
-    console.log('Navigating to:', path);
-    // You can replace this with actual navigation code
-    window.location.href = path;
+    // Use Next.js router instead of window.location
+    router.push(path);
   };
-  
-  const menuItems = [
-    { 
-      id: 'dashboard', 
-      icon: <FaHouse size={18} />, 
-      label: 'Dashboard',
-      subItems: [],
-      path: '/finance-tracker/dashboard'
-    },
-    { 
-      id: 'quick-overview', 
-      icon: <FaChartPie size={18} />, 
-      label: 'Quick Overview',
-      subItems: [
-        { id: 'account-balances', label: 'Account Balances', icon: <FaWallet size={14} />, path: '/finance-tracker/quick-overview/account-balances' },
-        { id: 'budget-overview', label: 'Budget Overview', icon: <FaChartLine size={14} />, path: '/finance-tracker/quick-overview/budget-overview' },
-        { id: 'recent-transactions', label: 'Recent Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/quick-overview/recent-transactions' },
-        { id: 'spending-by-category', label: 'Spending by Category', icon: <FaTableColumns size={14} />, path: '/finance-tracker/quick-overview/spending-by-category' },
-        { id: 'total-spending', label: 'Total Spending', icon: <FaChartPie size={14} />, path: '/finance-tracker/quick-overview/total-spending' }
-      ]
-    },
-    { 
-      id: 'cashflow', 
-      icon: <FaRegNoteSticky size={18} />, 
-      label: 'Cashflow',
-      subItems: [
-        { id: 'income', label: 'Income', icon: <FaChartLine size={14} />, path: '/finance-tracker/cashflow/income' },
-        { id: 'expenses', label: 'Expenses', icon: <FaWallet size={14} />, path: '/finance-tracker/cashflow/expenses' }
-      ]
-    },
-    { 
-      id: 'transactions', 
-      icon: <FaTableColumns size={18} />, 
-      label: 'Transactions',
-      subItems: [
-        { id: 'all', label: 'All Transactions', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/transactions/all' },
-        { id: 'loop', label: 'Loop Transactions', icon: <FaShuffle size={14} />, path: '/finance-tracker/transactions/loop-transactions' }
-      ]
-    },
-    { 
-      id: 'planning', 
-      icon: <FaChartLine size={18} />, 
-      label: 'Planning & Subscriptions',
-      subItems: [
-        { id: 'budget-plan', label: 'Budget Plan', icon: <FaRegNoteSticky size={14} />, path: '/finance-tracker/planning-and-subscriptions/budget-plan' },
-        { id: 'planned-payments', label: 'Planned Payments', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/planned-payments' },
-        { id: 'subscriptions', label: 'Subscriptions', icon: <FaRegBell size={14} />, path: '/finance-tracker/planning-and-subscriptions/subscriptions' }
-      ]
-    },
-    { 
-      id: 'portfolio', 
-      icon: <FaWallet size={18} />, 
-      label: 'Portfolio',
-      subItems: [
-        { id: 'accounts', label: 'Accounts', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/accounts' },
-        { id: 'crypto', label: 'Crypto', icon: <FaWallet size={14} />, path: '/finance-tracker/portfolio/crypto' },
-        { id: 'stocks', label: 'Stocks & Funds', icon: <FaChartLine size={14} />, path: '/finance-tracker/portfolio/stocks-and-funds' }
-      ]
-    },
-    { 
-      id: 'statistics', 
-      icon: <FaChartPie size={18} />, 
-      label: 'Statistics',
-      subItems: [
-        { id: 'ai-optimization', label: 'AI Optimization', icon: <FaRobot size={14} />, path: '/finance-tracker/statistics/ai-optimization' },
-        { id: 'budget-plan-stats', label: 'Budget Plan Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/budget-plan-stats' },
-        { id: 'planned-payments-stats', label: 'Planned Payments Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/planned-payments-stats' },
-        { id: 'subscriptions-stats', label: 'Subscriptions Stats', icon: <FaChartLine size={14} />, path: '/finance-tracker/statistics/subscriptions-stats' }
-      ]
-    }
-  ];
-  
-  const favoriteItems = [
-    { id: 'design-project', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'Design Project' },
-    { id: 'seo-automation', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'SEO Automation' },
-    { id: 'email-marketing', icon: <FaStar size={14} className="text-[#50E3C2]" />, label: 'Email Marketing' }
-  ];
   
   const toggleMobileMenu = () => {
     const newState = !mobileMenuOpen;
@@ -535,7 +523,7 @@ export default function Sidebar() {
                   className={`
                     relative flex items-center ${!collapsed || isInMobileView ? 'pl-3 pr-3 py-2.5' : 'justify-center py-3'} 
                     rounded-xl menu-item-hover cursor-pointer group
-                    ${activeMenu === item.id || (typeof window !== 'undefined' && item.subItems.some(subItem => window.location.pathname.includes(subItem.path))) 
+                    ${activeMenu === item.id || (item.subItems.some(subItem => pathname?.includes(subItem.path))) 
                       ? 'active-menu text-white bg-[#131313]' 
                       : 'text-gray-400'}
                   `}
@@ -552,7 +540,7 @@ export default function Sidebar() {
                   <div className="active-indicator"></div>
                   
                   <div className={`
-                    ${activeMenu === item.id || (typeof window !== 'undefined' && item.subItems.some(subItem => window.location.pathname.includes(subItem.path))) 
+                    ${activeMenu === item.id || (item.subItems.some(subItem => pathname?.includes(subItem.path))) 
                       ? 'text-[#50E3C2]' 
                       : 'text-gray-400 group-hover:text-white'} 
                     ${!collapsed || isInMobileView ? 'mr-3' : ''}
@@ -585,7 +573,7 @@ export default function Sidebar() {
                       <div 
                         key={subItem.id}
                         className={`flex items-center px-3 py-2 rounded-lg text-sm hover:bg-[#131313] cursor-pointer transition-all duration-150 ${
-                          window.location.pathname.includes(subItem.path) 
+                          pathname?.includes(subItem.path) 
                             ? 'text-white bg-[#131313]/70' 
                             : 'text-gray-400 hover:text-white'
                         }`}
@@ -598,7 +586,7 @@ export default function Sidebar() {
                         }}
                       >
                         <div className={`mr-2.5 ${
-                          window.location.pathname.includes(subItem.path)
+                          pathname?.includes(subItem.path)
                             ? 'text-[#50E3C2]'
                             : 'text-gray-500'
                         }`}>
@@ -623,7 +611,7 @@ export default function Sidebar() {
                         <div 
                           key={subItem.id}
                           className={`flex items-center px-2 py-2 rounded-lg text-sm hover:bg-[#131313]/70 cursor-pointer transition-all duration-150 ${
-                            window.location.pathname.includes(subItem.path) 
+                            pathname?.includes(subItem.path) 
                               ? 'text-white bg-[#131313]/40' 
                               : 'text-gray-400 hover:text-white'
                           }`}
@@ -636,7 +624,7 @@ export default function Sidebar() {
                           }}
                         >
                           <div className={`mr-2.5 ${
-                            window.location.pathname.includes(subItem.path)
+                            pathname?.includes(subItem.path)
                               ? 'text-[#50E3C2]'
                               : 'text-gray-500'
                           }`}>

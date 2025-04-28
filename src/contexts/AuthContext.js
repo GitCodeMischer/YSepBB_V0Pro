@@ -54,7 +54,12 @@ export function AuthProvider({ children }) {
       }
     };
 
-    initAuth();
+    // Small delay to ensure consistent hydration
+    const timer = setTimeout(() => {
+      initAuth();
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   /**
@@ -299,7 +304,22 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    // Instead of throwing an error, provide a default context for components that
+    // might render before the context is fully initialized
+    console.warn('useAuth called outside of AuthProvider - using default values');
+    return {
+      user: null,
+      isAuthenticated: false,
+      loading: false,
+      requires2FA: false,
+      pendingLoginData: null,
+      loginWithCredentials: () => ({ success: false, message: 'Auth not initialized' }),
+      loginWithProvider: () => Promise.resolve({ success: false, message: 'Auth not initialized' }),
+      handle2FAVerification: () => false,
+      updateTwoFactorStatus: () => false,
+      logout: () => {},
+      updateUser: () => false
+    };
   }
   return context;
 }

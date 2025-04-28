@@ -3,6 +3,27 @@
 
 import { API_ROUTES } from '@/config/apiRoutes';
 
+// Helper function for more predictable random generation during development
+const generatePredictableString = (length, seed = 12345, chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') => {
+  // In development, use a predictable sequence
+  if (process.env.NODE_ENV === 'development') {
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      // Use a simple deterministic algorithm based on seed and position
+      const index = (seed + i) % chars.length;
+      result += chars.charAt(index);
+    }
+    return result;
+  }
+  
+  // In production, use random as usual
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 /**
  * Generates a new 2FA secret and QR code URL
  * @returns {Object} The generated secret data
@@ -11,20 +32,11 @@ export function generate2FASecret() {
   // In a real implementation, this would call an API endpoint
   // For demo purposes, we're generating mock data
   
-  // Generate random strings for demo
-  const generateRandomString = (length, chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') => {
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  };
-  
   // Create a mock secret
-  const secret = generateRandomString(16);
+  const secret = generatePredictableString(16);
   
   // Create a mock recovery code
-  const recoveryCode = generateRandomString(24, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567');
+  const recoveryCode = generatePredictableString(24, 67890, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567');
   
   // Generate a placeholder QR code URL (in real app, this would be an actual QR code)
   // In production, you'd use a library like `qrcode` to generate a real QR code
@@ -150,23 +162,14 @@ export async function generateRecoveryCodes(userId, count = 10) {
     // In a real implementation, this would call an API endpoint
     // For demo, we'll generate them locally
     
-    // Helper function to generate random strings
-    const generateRandomString = (length, chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') => {
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    };
-    
     // Generate the specified number of recovery codes
     const codes = Array(count)
       .fill(0)
-      .map(() => {
+      .map((_, index) => {
         // Format: XXXX-XXXX-XXXX
-        const part1 = generateRandomString(4);
-        const part2 = generateRandomString(4);
-        const part3 = generateRandomString(4);
+        const part1 = generatePredictableString(4, 10000 + index);
+        const part2 = generatePredictableString(4, 20000 + index);
+        const part3 = generatePredictableString(4, 30000 + index);
         return `${part1}-${part2}-${part3}`;
       });
     

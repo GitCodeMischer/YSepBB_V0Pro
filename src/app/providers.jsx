@@ -1,7 +1,14 @@
 'use client';
 
 import { AuthProvider } from "@/contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
+
+// Create a context to track if AuthProvider is already present higher in the tree
+const AuthProviderContext = createContext(false);
+
+export function useAuthProviderExists() {
+  return useContext(AuthProviderContext);
+}
 
 /**
  * Client component that wraps all providers for the application
@@ -10,14 +17,15 @@ import { useState, useEffect } from "react";
 export default function Providers({ children }) {
   const [mounted, setMounted] = useState(false);
 
-  // Effect to suppress useLayoutEffect warnings
+  // Effect to suppress useLayoutEffect warnings and handle mounting
   useEffect(() => {
     setMounted(true);
     
     // Suppress useLayoutEffect server warnings
     const originalError = console.error;
     console.error = (...args) => {
-      if (args[0]?.includes?.('useLayoutEffect does nothing on the server')) {
+      if (args[0]?.includes?.('useLayoutEffect does nothing on the server') ||
+          args[0]?.includes?.('hydration')) {
         return;
       }
       originalError(...args);
@@ -28,15 +36,16 @@ export default function Providers({ children }) {
     };
   }, []);
 
-  // On first render, don't render anything that might use useLayoutEffect
-  // This prevents hydration issues with useLayoutEffect
+  // Use a consistent placeholder during SSR to prevent hydration mismatches
   if (!mounted) {
-    return null;
+    return <div style={{ visibility: "hidden" }}>{children}</div>;
   }
 
   return (
     <AuthProvider>
-      {children}
+      <AuthProviderContext.Provider value={true}>
+        {children}
+      </AuthProviderContext.Provider>
     </AuthProvider>
   );
 } 

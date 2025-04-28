@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { AuthProvider } from '@/contexts/AuthContext';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PWA components to avoid SSR issues
+const PWAInstallPrompt = dynamic(() => import('./PWAInstallPrompt'), {
+  ssr: false
+});
+
+const ServiceWorkerUpdateNotification = dynamic(
+  () => import('./ServiceWorkerUpdateNotification'),
+  { ssr: false }
+);
 
 export default function Layout({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Default to collapsed on mobile
@@ -28,6 +40,8 @@ export default function Layout({ children }) {
           {children}
         </main>
       </div>
+      <PWAInstallPrompt />
+      <ServiceWorkerUpdateNotification />
     </div>
   );
 } 
