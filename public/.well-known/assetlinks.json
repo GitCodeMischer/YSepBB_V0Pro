@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kreatordev.gymtracker",
+      "sha256_cert_fingerprints": [
+        "1D:97:7E:04:0C:71:46:12:3A:40:72:D3:BA:70:2A:2D:F5:F3:C8:C7:44:2E:DE:4A:EB:F8:E4:5C:0D:E1:7F:D2"
+      ]
+    }
+  }
+]
